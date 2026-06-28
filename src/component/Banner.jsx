@@ -143,7 +143,7 @@ export default function Banner() {
       {/* ২. বাম পাশের ফ্লোটিং গেম কনসোল কার্ড (input_file_0.png) */}
       {/* ========================================================= */}
       <motion.div 
-        className="absolute left-6 xl:left-20 -bottom-20 w-[130px] md:w-[220px] lg:w-[260px] hidden md:block pointer-events-none drop-shadow-[0_15px_50px_rgba(244,63,94,0.15)]"
+        className="absolute left-6 xl:left-20 -bottom-20 w-[130px] md:w-[220px] lg:w-[260px] hidden md:block pointer-events-none drop-shadow-[0_15px_50px_rgba(244,63,94,0.15)] z-1"
         initial={{ opacity: 0, x: -100, rotate: -15 }}
         animate={{ 
           opacity: 1, 
