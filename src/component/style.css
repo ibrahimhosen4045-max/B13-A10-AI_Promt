@@ -3,3 +3,7 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
+
+.gradient-bg {
+    background:  linear-gradient(to right, rgb(22 5 143 / 69%), rgb(52 31 151 / 18%));
+}

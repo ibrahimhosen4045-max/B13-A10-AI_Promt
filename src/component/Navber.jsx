@@ -14,6 +14,7 @@ import {
   ShieldAlert,
   Flame
 } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Navber() {
   const [isOpen, setIsOpen] = useState(false);
@@ -32,11 +33,12 @@ export default function Navber() {
   };
 
   const navLinks = [
-    { name: 'Home', href: '#home', isHot: false },
-    { name: 'All Prompts', href: '#all-prompts', isHot: false },
-    { name: 'On Sale', href: '#on-sale', isHot: true },
-    { name: 'Community', href: '#community', isHot: false },
+    { name: 'Home', href: '/', isHot: false },
+    { name: 'All Prompts', href: '/allPrompt', isHot: false },
+    
   ];
+
+  
 
   const mobileMenuVariants = {
     closed: {
@@ -124,7 +126,7 @@ export default function Navber() {
             {/* Desktop Navigation Links */}
             <div className="hidden md:flex items-center gap-8">
               {navLinks.map((link, idx) => (
-                <a 
+                <Link 
                   key={idx} 
                   href={link.href} 
                   className="relative text-sm text-gray-300 hover:text-white font-semibold transition-colors py-2 group flex items-center gap-1"
@@ -137,7 +139,7 @@ export default function Navber() {
                     </span>
                   )}
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-500 to-cyan-500 group-hover:w-full transition-all duration-300" />
-                </a>
+                </Link>
               ))}
             </div>
 
@@ -216,16 +218,21 @@ export default function Navber() {
                 </div>
               ) : (
                 <>
-                  <a href="#login" className="text-sm font-bold text-purple-300 hover:text-white px-5 py-2.5 transition-colors">
+                  <Link href={'/login'}>
+                  <button className="text-sm font-bold text-purple-300 hover:text-white px-5 py-2.5 transition-colors">
                     Login
-                  </a>
-                  <a 
-                    href="#register" 
+                  </button>
+                  </Link>
+
+                  <Link href={'/register'}>
+                  <button 
+                   
                     className="relative group overflow-hidden px-6 py-3 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-sm font-bold shadow-[0_0_20px_rgba(147,51,234,0.45)] transition-all duration-300 hover:scale-105"
                   >
                     <span className="relative z-10">Register Now</span>
                     <span className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  </a>
+                  </button>
+                  </Link>
                 </>
               )}
             </div>
@@ -301,20 +308,22 @@ export default function Navber() {
                   </button>
                 ) : (
                   <>
-                    <a 
-                      href="#login" 
+                    <Link href={'/login'}>
+                    <button  
                       onClick={() => setIsOpen(false)}
                       className="w-full text-center py-3.5 rounded-full bg-white/5 border border-white/10 text-purple-300 hover:text-white font-bold transition-all"
                     >
                       Login
-                    </a>
-                    <a 
-                      href="#register" 
+                    </button>
+                    </Link>
+                    <Link href={'/register'}>
+                    <button  
                       onClick={() => setIsOpen(false)}
                       className="w-full text-center py-3.5 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold transition-all shadow-[0_0_25px_rgba(147,51,234,0.3)]"
                     >
                       Get Started
-                    </a>
+                    </button>
+                    </Link>
                   </>
                 )}
               </motion.div>
