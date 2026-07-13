@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Terminal, Cpu, Sparkles } from 'lucide-react';
 
-export default function Loader({ message = "Booting Promptly Engine" }) {
+export default function Loader({ message = "Booting Promptly Engine", onComplete }) {
   const [percent, setPercent] = useState(0);
   const [currentStatus, setCurrentStatus] = useState("Initializing core sandboxes...");
 
@@ -18,11 +18,13 @@ export default function Loader({ message = "Booting Promptly Engine" }) {
   ];
 
   useEffect(() => {
+    let finished = false;
     // ০ থেকে ১০০% পর্যন্ত কাউন্টডাউন সিমুলেটর
     const progressInterval = setInterval(() => {
       setPercent((prev) => {
         if (prev >= 100) {
           clearInterval(progressInterval);
+          finished = true;
           return 100;
         }
         // র্যান্ডম স্পিডে লোড হবে যাতে রিয়ালিস্টিক লাগে
@@ -37,9 +39,18 @@ export default function Loader({ message = "Booting Promptly Engine" }) {
       setCurrentStatus(randomStatus);
     }, 1200);
 
+    const timer = setTimeout(()=>{
+
+      if(finished){
+        onComplete?.();
+      }
+
+    },3000);
+
     return () => {
       clearInterval(progressInterval);
       clearInterval(statusInterval);
+      clearTimeout(timer)
     };
   }, []);
 

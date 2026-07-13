@@ -3,6 +3,7 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import bgImage from '@/assest/bg.jpg'
 import './style.css'
+import Link from 'next/link'
 
 const SecondBanner = ({heading}) => {
   const containerVariants = {
@@ -57,7 +58,9 @@ const SecondBanner = ({heading}) => {
             variants={itemVariants} 
             className=" text-gray-200 font-medium"
           >
-            <span className='cursor-pointer hover:text-purple-400 transition-colors duration-300'>HOME</span> / {heading}
+            <Link href={'/'}>
+            <span className='cursor-pointer hover:text-purple-400 transition-colors duration-300'>HOME</span>
+            </Link> / {heading}
           </motion.h2>
         </motion.div>
       </div>

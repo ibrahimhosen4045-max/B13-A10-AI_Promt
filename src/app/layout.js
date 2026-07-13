@@ -1,7 +1,7 @@
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import Navber from "@/component/Navber";
-import Footer from "@/component/Footer";
+import AppLoader from "@/component/AppLoader";
+import { Toaster } from "react-hot-toast";
 
 const popins = Poppins({
   subsets: ["latin"],
@@ -21,9 +21,12 @@ export default function RootLayout({ children }) {
       className={`${popins.className} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Navber></Navber>
+        <AppLoader>
+   
+          <Toaster />
         {children}
-        <Footer></Footer>
+        
+        </AppLoader>
         </body>
     </html>
   );

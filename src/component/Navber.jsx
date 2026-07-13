@@ -15,20 +15,23 @@ import {
   Flame
 } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { authClient } from '@/lib/auth-client';
+import { signOut } from 'better-auth/api';
 
 export default function Navber() {
+  const pathname = usePathname();
+  const router = useRouter()
+  const { data: session, isPending } = authClient.useSession();
+  const user = session?.user;
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
-  // ডেমো পারপাস ও টেস্ট করার সুবিধার জন্য লগইন স্টেট টগল
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userRole, setUserRole] = useState('Creator'); // Options: User, Creator, Admin
-  
   const userMockData = {
-    name: "Alex Rivera",
-    email: "alex.creator@aiplatform.com",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
-    role: userRole,
+    name: user?.name,
+    email: user?.email,
+    avatar: user?.image,
+    role: user?.role,
     subscription: "Premium"
   };
 
@@ -36,9 +39,7 @@ export default function Navber() {
     { name: 'Home', href: '/', isHot: false },
     { name: 'All Prompts', href: '/allPrompt', isHot: false },
     
-  ];
-
-  
+  ]; 
 
   const mobileMenuVariants = {
     closed: {
@@ -70,35 +71,13 @@ export default function Navber() {
     open: { opacity: 1, y: 0 }
   };
 
+  const handleSignOut =async () => {
+    await authClient.signOut()
+    router.push("/")
+  }
+
   return (
     <div className="relative">
-      
-      {/* 🛠️ DEVELOPER TESTING INTERACTIVE PANEL (Can be removed in production) */}
-      <div className="fixed bottom-4 right-4 z-50 bg-slate-950/90 border border-purple-500/30 p-3 rounded-2xl backdrop-blur-xl flex flex-col gap-2 shadow-[0_0_20px_rgba(168,85,247,0.2)] text-xs text-white max-w-[240px]">
-        <div className="font-bold text-purple-400 flex items-center gap-1">
-          <Sparkles className="w-3.5 h-3.5" /> Testing Sandbox
-        </div>
-        <p className="text-gray-400 text-[10px]">Toggle authentication states to preview navbar variants dynamically.</p>
-        <div className="flex gap-1.5 mt-1">
-          <button 
-            onClick={() => setIsLoggedIn(!isLoggedIn)} 
-            className={`px-2.5 py-1 rounded-full font-semibold transition-all ${isLoggedIn ? 'bg-purple-600 text-white' : 'bg-white/10 text-gray-300 hover:bg-white/20'}`}
-          >
-            {isLoggedIn ? 'Logged In' : 'Guest Mode'}
-          </button>
-          {isLoggedIn && (
-            <select 
-              value={userRole} 
-              onChange={(e) => setUserRole(e.target.value)}
-              className="bg-white/5 border border-white/10 rounded-full px-2 py-1 text-xs text-purple-200 outline-none"
-            >
-              <option value="User" className="bg-slate-900">User</option>
-              <option value="Creator" className="bg-slate-900">Creator</option>
-              <option value="Admin" className="bg-slate-900">Admin</option>
-            </select>
-          )}
-        </div>
-      </div>
 
       {}
       <nav className="fixed top-0 left-0 w-full z-40 bg-[#040814]/75 backdrop-blur-md border-b border-white/[0.06] transition-all duration-300">
@@ -145,7 +124,7 @@ export default function Navber() {
 
             {/* Desktop Authentication & Profile Actions */}
             <div className="hidden md:flex items-center gap-4">
-              {isLoggedIn ? (
+              {user ? (
                 <div className="relative">
                   <button 
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -196,9 +175,9 @@ export default function Navber() {
                           <a href="#profile" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-all">
                             <User className="w-4 h-4 text-purple-400" /> My Profile
                           </a>
-                          <a href="#dashboard" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-all">
+                          <Link href={"/dashboard"} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-all">
                             <LayoutDashboard className="w-4 h-4 text-indigo-400" /> {userMockData.role} Dashboard
-                          </a>
+                          </Link>
                           <a href="#saved" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-all">
                             <Bookmark className="w-4 h-4 text-cyan-400" /> Bookmarked Prompts
                           </a>
@@ -206,7 +185,7 @@ export default function Navber() {
 
                         <div className="pt-2 border-t border-white/5">
                           <button 
-                            onClick={() => setIsLoggedIn(false)}
+                            onClick={handleSignOut}
                             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-red-400 hover:text-red-300 hover:bg-red-500/5 transition-all text-left"
                           >
                             <LogOut className="w-4 h-4" /> Sign Out
@@ -262,7 +241,7 @@ export default function Navber() {
             >
               <div className="flex flex-col gap-2">
                 {navLinks.map((link, idx) => (
-                  <motion.a 
+                  <Link
                     key={idx} 
                     href={link.href} 
                     variants={linkVariants}
@@ -274,11 +253,11 @@ export default function Navber() {
                       {link.isHot && <span className="bg-pink-500/20 text-pink-400 text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full border border-pink-500/30">Hot</span>}
                     </span>
                     <ChevronDown className="w-4 h-4 -rotate-90 text-gray-600" />
-                  </motion.a>
+                  </Link>
                 ))}
               </div>
 
-              {isLoggedIn && (
+              {user && (
                 <motion.div variants={linkVariants} className="border-t border-white/5 pt-4 px-4">
                   <div className="flex items-center gap-3 mb-4">
                     <img src={userMockData.avatar} alt="Profile" className="w-11 h-11 rounded-full object-cover border border-purple-500/30" />
@@ -299,9 +278,9 @@ export default function Navber() {
               )}
 
               <motion.div variants={linkVariants} className="border-t border-white/5 pt-4 px-4 flex flex-col gap-3">
-                {isLoggedIn ? (
+                {user ? (
                   <button 
-                    onClick={() => { setIsLoggedIn(false); setIsOpen(false); }}
+                    onClick={handleSignOut}
                     className="w-full flex items-center justify-center gap-2 py-3.5 rounded-full bg-red-500/10 text-red-400 font-bold hover:bg-red-500/20 transition-all border border-red-500/20"
                   >
                     <LogOut className="w-4 h-4" /> Sign Out
