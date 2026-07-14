@@ -1,22 +1,25 @@
 "use client"
+import { authClient } from '@/lib/auth-client'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   LayoutDashboard, User, ShieldAlert, Wallet, 
   Bookmark, Shield, PlusCircle, ListOrdered, 
   Users, AlertTriangle, LogOut, Menu, X, Download
 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
-const DashNavber = () => {
+const DashNavber = ({userDetails}) => {
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
     const [activeTab, setActiveTab] = useState('overview')
+    const router = useRouter()
 
       const session = {
     user: {
-      name: "Sabbir Ahmed",
-      email: "sabbir@webdev.com",
-      role: "admin", // Options: 'user' | 'creator' | 'admin'
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
+      name: userDetails?.name,
+      email: userDetails?.email,
+      role: userDetails?.role, // Options: 'user' | 'creator' | 'admin'
+      avatar: userDetails?.image
     }
   }
   
@@ -34,7 +37,7 @@ const DashNavber = () => {
       ]
     }
     
-    if (role === 'creator') {
+    if (role === 'Creator') {
       return [
         ...baseLinks,
         { id: 'add-prompt', label: 'Add New Prompt', icon: PlusCircle },
@@ -49,6 +52,11 @@ const DashNavber = () => {
       { id: 'purchased', label: 'Purchased Prompts', icon: Download },
       { id: 'bookmarks', label: 'My Bookmarks', icon: Bookmark },
     ]
+  }
+
+  const handleSingOut =async () => {
+    await authClient.signOut()
+    router.push('/')
   }
 
   const sidebarLinks = getSidebarLinks(user?.role)
@@ -99,7 +107,7 @@ const DashNavber = () => {
         </nav>
 
         {/* Logout Trigger */}
-        <button className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-rose-400 hover:bg-rose-500/10 transition-all border border-transparent hover:border-rose-500/20 mt-auto">
+        <button onClick={handleSingOut} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-rose-400 hover:bg-rose-500/10 transition-all border border-transparent hover:border-rose-500/20 mt-auto">
           <LogOut className="w-5 h-5" />
           Sign Out
         </button>
