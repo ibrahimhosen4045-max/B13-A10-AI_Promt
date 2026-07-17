@@ -10,8 +10,12 @@ const DashboardLayout = ({children}) => {
   return (
     
     <div className="min-h-screen bg-[#0a0516] text-white flex relative overflow-hidden">
-      <DashNavber userDetails = {user}></DashNavber>
-      {children}
+      <div className="lg:w-100 xl:w-90 2xl:w-85 h-screen ">
+        <DashNavber userDetails = {user}></DashNavber>
+      </div>
+      <div className="w-full">
+        {children}
+      </div>
     </div>
   )
 }

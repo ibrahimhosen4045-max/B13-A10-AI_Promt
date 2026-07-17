@@ -17,7 +17,8 @@ import {
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { authClient } from '@/lib/auth-client';
-import { signOut } from 'better-auth/api';
+import SignOutModal from './DashBoard/SingOutModal';
+import toast from 'react-hot-toast';
 
 export default function Navber() {
   const pathname = usePathname();
@@ -71,9 +72,10 @@ export default function Navber() {
     open: { opacity: 1, y: 0 }
   };
 
-  const handleSignOut =async () => {
+  const handleSignOut =async ()=> {
     await authClient.signOut()
-    router.push("/")
+    router.push('/')
+    toast.success("SignOut successfully!")
   }
 
   return (
@@ -184,11 +186,9 @@ export default function Navber() {
                         </div>
 
                         <div className="pt-2 border-t border-white/5">
-                          <button 
-                            onClick={handleSignOut}
-                            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-red-400 hover:text-red-300 hover:bg-red-500/5 transition-all text-left"
-                          >
-                            <LogOut className="w-4 h-4" /> Sign Out
+                          <button onClick={handleSignOut} className="flex w-full items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-rose-400 hover:bg-rose-500/10 transition-all border border-transparent hover:border-rose-500/20 mt-auto">
+                            <LogOut className="w-5 h-5" />
+                            Sign Out
                           </button>
                         </div>
                       </motion.div>

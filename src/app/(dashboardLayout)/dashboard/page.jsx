@@ -64,7 +64,7 @@ const Dashboard = () => {
   const stats = getStatCards(user?.role)
 
   return (
-    <div className=" min-h-screen bg-[#0a0516] text-white flex relative overflow-hidden">
+    <div className=" min-h-screen md:pt-17 lg:pt-0 bg-[#0a0516] text-white flex relative overflow-hidden">
       {/* Cyberpunk Radial Lighting Effects */}
       <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple-900/20 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-cyan-900/20 rounded-full blur-[120px] pointer-events-none" />

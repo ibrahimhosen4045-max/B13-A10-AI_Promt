@@ -6,8 +6,10 @@ import {
   Bookmark, Shield, PlusCircle, ListOrdered, 
   Users, AlertTriangle, LogOut, Menu, X, Download
 } from 'lucide-react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
+
 
 const DashNavber = ({userDetails}) => {
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
@@ -26,31 +28,31 @@ const DashNavber = ({userDetails}) => {
   const user = session?.user;
 
      const getSidebarLinks = (role) => {
-    const baseLinks = [{ id: 'overview', label: 'Overview', icon: LayoutDashboard }]
+    const baseLinks = [{ id: 'overview', label: 'Overview', icon: LayoutDashboard,  href: "/dashboard" }]
     
     if (role === 'admin') {
       return [
         ...baseLinks,
-        { id: 'manage-users', label: 'Manage Users', icon: Users },
-        { id: 'pending-prompts', label: 'Pending Approvals', icon: ShieldAlert },
-        { id: 'reports', label: 'Reported Prompts', icon: AlertTriangle },
+        { id: 'manage-users', label: 'Manage Users', icon: Users, href: '/creator/add' },
+        { id: 'pending-prompts', label: 'Pending Approvals', icon: ShieldAlert, href: '/creator/add' },
+        { id: 'reports', label: 'Reported Prompts', icon: AlertTriangle, href: '/creator/add' },
       ]
     }
     
     if (role === 'Creator') {
       return [
         ...baseLinks,
-        { id: 'add-prompt', label: 'Add New Prompt', icon: PlusCircle },
-        { id: 'my-prompts', label: 'My Prompts', icon: ListOrdered },
-        { id: 'earnings', label: 'Earnings & Stripe', icon: Wallet },
+        { id: 'add-prompt', label: 'Add New Prompt', icon: PlusCircle, href: '/dashboard/creator/addPromt'},
+        { id: 'my-prompts', label: 'My Prompts', icon: ListOrdered, href: '/dashboard/creator/myPromt' },
+        { id: 'earnings', label: 'Earnings & Stripe', icon: Wallet, href: '/dashboard/creator/earningStrip' },
       ]
     }
     
     // Default Normal User
     return [
       ...baseLinks,
-      { id: 'purchased', label: 'Purchased Prompts', icon: Download },
-      { id: 'bookmarks', label: 'My Bookmarks', icon: Bookmark },
+      { id: 'purchased', label: 'Purchased Prompts', icon: Download, href: '/creator/addPromt' },
+      { id: 'bookmarks', label: 'My Bookmarks', icon: Bookmark, href: '/creator/add' },
     ]
   }
 
@@ -61,10 +63,10 @@ const DashNavber = ({userDetails}) => {
 
   const sidebarLinks = getSidebarLinks(user?.role)
   return (
-    <div className='h-screen'>
+    <div className='h-screen fixed top-0 left-0 bottom-0 z-50'>
             {/* --- SIDEBAR COMPONENT --- */}
       {/* Desktop Sidebar */}
-      <aside className="h-full hidden lg:flex flex-col w-72 bg-[#0d0921]/80 backdrop-blur-xl border-r border-purple-500/10 p-6 z-30">
+      <aside className="h-full hidden lg:flex flex-col w-72 bg-[#0d0921]/80 backdrop-blur-xl border-r border-purple-500/10 p-6 z-30 pt-10">
         <div className="flex items-center gap-3 pb-8 border-b border-purple-500/10">
           <div className="p-2.5 bg-gradient-to-tr from-purple-600 to-pink-500 rounded-xl shadow-[0_0_15px_rgba(168,85,247,0.4)]">
             <Shield className="w-6 h-6 text-white" />
@@ -90,8 +92,9 @@ const DashNavber = ({userDetails}) => {
             const Icon = link.icon
             const isActive = activeTab === link.id
             return (
+              <Link href={link.href} key={link.id}>
               <button
-                key={link.id}
+                
                 onClick={() => setActiveTab(link.id)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
                   isActive 
@@ -102,15 +105,18 @@ const DashNavber = ({userDetails}) => {
                 <Icon className={`w-5 h-5 ${isActive ? 'text-purple-400' : 'text-gray-400'}`} />
                 {link.label}
               </button>
+              </Link>
             )
           })}
         </nav>
 
         {/* Logout Trigger */}
+        
         <button onClick={handleSingOut} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-rose-400 hover:bg-rose-500/10 transition-all border border-transparent hover:border-rose-500/20 mt-auto">
           <LogOut className="w-5 h-5" />
           Sign Out
         </button>
+        
       </aside>
 
       {/* Mobile Menu Trigger Header */}
