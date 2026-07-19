@@ -11,101 +11,143 @@ import {
   CheckCircle2, 
   AlertCircle 
 } from 'lucide-react';
+import { uploadImage } from '@/lib/UploadImage';
+import toast from 'react-hot-toast';
+import { authClient } from '@/lib/auth-client';
 
-export default function AddPromt({ onAddPrompt }) {
-  // Form Field States
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [content, setContent] = useState('');
-  const [category, setCategory] = useState('');
-  const [aiTool, setAiTool] = useState('Midjourney');
-  const [tags, setTags] = useState('');
-  const [difficulty, setDifficulty] = useState('Beginner');
-  const [visibility, setVisibility] = useState('Public');
-  
-  // Image Upload Preview States
-  const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState('');
+export default function AddPromt() {
 
-  // Status and Validation States
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [notification, setNotification] = useState(null); // { type: 'success' | 'error', message: string }
+const { data: session } = authClient.useSession();
+const user = session?.user;
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      if (file.size > 2 * 1024 * 1024) {
-        showNotification('error', 'Image size must be less than 2MB!');
-        return;
-      }
-      setImageFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-        showNotification('success', 'Thumbnail preview generated successfully.');
-      };
-      reader.readAsDataURL(file);
+// Form States
+const [title, setTitle] = useState("");
+const [description, setDescription] = useState("");
+const [content, setContent] = useState("");
+const [category, setCategory] = useState("");
+const [aiTool, setAiTool] = useState("");
+const [tags, setTags] = useState("");
+const [difficulty, setDifficulty] = useState("Beginner");
+const [visibility, setVisibility] = useState("Public");
+
+// Image States
+const [imageFile, setImageFile] = useState(null);
+const [imagePreview, setImagePreview] = useState("");
+
+// Loading State
+const [isSubmitting, setIsSubmitting] = useState(false);
+
+// Image Upload Preview
+const handleImageChange = (e) => {
+  const file = e.target.files?.[0];
+
+  if (!file) return;
+
+  if (file.size > 2 * 1024 * 1024) {
+    toast.error("Image size must be less than 2MB.");
+    return;
+  }
+
+  setImageFile(file);
+
+  const reader = new FileReader();
+
+  reader.onloadend = () => {
+    setImagePreview(reader.result);
+  };
+
+  reader.readAsDataURL(file);
+};
+
+// Remove Image
+const removeImage = () => {
+  setImageFile(null);
+  setImagePreview("");
+};
+
+// Submit Form
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!title || !description || !content || !category) {
+    toast.error("Please fill all required fields.");
+    return;
+  }
+
+  setIsSubmitting(true);
+
+  try {
+    let imageUrl =
+      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=400&q=80";
+
+    if (imageFile) {
+      imageUrl = await uploadImage(imageFile);
     }
-  };
 
-  const removeImage = () => {
-    setImageFile(null);
-    setImagePreview('');
-  };
-
-  const showNotification = (type, message) => {
-    setNotification({ type, message });
-    setTimeout(() => {
-      setNotification(null);
-    }, 4000);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (!title || !description || !content || !category) {
-      showNotification('error', 'Please fill out all required fieldsmarked with (*).');
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    // Creating the final submission object structure
     const payload = {
       title,
       description,
       content,
       category,
       aiTool,
-      tags: tags.split(',').map(tag => tag.trim().toLowerCase()).filter(Boolean),
+      tags: tags
+        .split(",")
+        .map((tag) => tag.trim().toLowerCase())
+        .filter(Boolean),
       difficulty,
-      thumbnail: imagePreview || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=400&q=80",
+      thumbnail: imageUrl,
       visibility,
       copyCount: 0,
-      status: 'pending' // Assignment Requirement: Starts as Pending
+      status: "pending",
+
+      creatorId: user?.id,
+      creatorName: user?.name,
+      creatorEmail: user?.email,
+      creatorImage: user?.image,
     };
 
-    // Simulating API loading states safely
-    setTimeout(() => {
-      setIsSubmitting(false);
-      if (onAddPrompt) {
-        onAddPrompt(payload);
-      }
-      
-      // Reset Form fields upon successful execution
-      setTitle('');
-      setDescription('');
-      setContent('');
-      setCategory('');
-      setTags('');
-      setDifficulty('Beginner');
-      setVisibility('Public');
-      setImageFile(null);
-      setImagePreview('');
+    const res = await fetch("http://localhost:5500/api/creator", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
 
-      showNotification('success', 'Prompt submitted successfully! Awaiting Admin review.');
-    }, 1200);
-  };
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data?.message || "Failed to add prompt.");
+      setIsSubmitting(false)
+      return
+    }
+
+    if(res.ok){
+      toast.success("Prompt added successfully!");
+      setIsSubmitting(false)
+    }
+    
+
+    // Reset Form
+    setTitle("");
+    setDescription("");
+    setContent("");
+    setCategory("");
+    setAiTool("");
+    setTags("");
+    setDifficulty("Beginner");
+    setVisibility("Public");
+    setImageFile(null);
+    setImagePreview("");
+
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+    toast.error(error.message || "Something went wrong!");
+  } finally {
+    setIsSubmitting(false);
+  }
+}; 
 
   return (
     <div className='w-full flex justify-center py-6 px-4 pt-20 lg:pt-6'>
@@ -113,22 +155,6 @@ export default function AddPromt({ onAddPrompt }) {
       
       {/* Top Cyberpunk Tech Highlight Border */}
       <span className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500" />
-
-      {/* Dynamic Toast Alerts Container inside Card */}
-      {notification && (
-        <div className={`fixed top-6 right-6 z-50 p-4 rounded-2xl border flex items-center gap-3 backdrop-blur-xl shadow-lg transition-all duration-300 ${
-          notification.type === 'success' 
-            ? 'bg-[#061e14]/95 border-emerald-500/30 text-emerald-400' 
-            : 'bg-[#22070e]/95 border-red-500/30 text-red-400'
-        }`}>
-          {notification.type === 'success' ? (
-            <CheckCircle2 className="w-5 h-5 flex-shrink-0 animate-bounce" />
-          ) : (
-            <AlertCircle className="w-5 h-5 flex-shrink-0 animate-shake" />
-          )}
-          <span className="text-xs font-bold">{notification.message}</span>
-        </div>
-      )}
 
       {/* Header Info Block */}
       <div className="mb-8 border-b border-white/[0.06] pb-6">
@@ -187,14 +213,19 @@ export default function AddPromt({ onAddPrompt }) {
         {/* Field 4: Category */}
         <div>
           <label className="text-[10px] font-bold uppercase tracking-widest text-purple-400 block mb-2 ml-1">Category Category *</label>
-          <input 
-            type="text" 
-            required
+          <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            placeholder="e.g., Graphics, Photography, Writing"
-            className="w-full bg-[#040814]/80 border border-white/10 p-4 rounded-2xl text-xs text-white placeholder-gray-600 outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10 transition-all"
-          />
+            className="w-full bg-[#040814]/80 border border-white/10 p-4 rounded-2xl text-xs text-purple-300 outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10 transition-all"
+          >
+            <option value="">Select Category</option>
+            <option value="Writing">Writing</option>
+            <option value="Coding">Coding</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Photography">Photography</option>
+            <option value="Design">Design</option>
+            <option value="Business">Business</option>
+          </select>
         </div>
 
         {/* Field 5: Target AI Tool selection */}
@@ -205,11 +236,20 @@ export default function AddPromt({ onAddPrompt }) {
             onChange={(e) => setAiTool(e.target.value)}
             className="w-full bg-[#040814]/80 border border-white/10 p-4 rounded-2xl text-xs text-purple-300 outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/10 transition-all"
           >
+            <option value="" >Select AI Tols</option>
             <option value="Midjourney">Midjourney</option>
             <option value="DALL-E">DALL-E 3</option>
             <option value="GPT prompts">GPT prompts (ChatGPT)</option>
             <option value="Stable Diffusion">Stable Diffusion</option>
             <option value="Leonardo AI">Leonardo AI</option>
+            <option value="Claude">Claude</option>
+            <option value="Gemini">Gemini</option>
+            <option value="Flux">Flux</option>
+            <option value="Ideogram">Ideogram</option>
+            <option value="Runway">Runway</option>
+            <option value="Suno">Suno</option>
+            <option value="ElevenLabs">ElevenLabs</option>
+            <option value="Perplexity">Perplexity</option>
           </select>
         </div>
 
@@ -229,20 +269,26 @@ export default function AddPromt({ onAddPrompt }) {
         <div>
           <label className="text-[10px] font-bold uppercase tracking-widest text-purple-400 block mb-2 ml-1">Difficulty level</label>
           <div className="grid grid-cols-3 gap-2">
-            {['Beginner', 'Intermediate', 'Pro'].map((lvl) => (
+            {['Beginner', 'Intermediate', 'Pro'].map((lvl) => { 
+              const activeStyle = {
+                Beginner: "bg-green-500/15 border-green-500 text-green-400 shadow-[0_0_15px_rgba(34,197,94,0.2)]",
+                Intermediate:'bg-yellow-500/15 border-yellow-500 text-yellow-400 shadow-[0_0_15px_rgba(234,179,8,0.2)]',
+                Pro:'bg-red-500/15 border-red-500 text-red-400 shadow-[0_0_15px_rgba(239,68,68,0.2)]',
+              }
+              return(
               <button
                 key={lvl}
                 type="button"
                 onClick={() => setDifficulty(lvl)}
                 className={`py-3.5 rounded-xl border text-xs font-bold transition-all duration-300 ${
                   difficulty === lvl 
-                    ? 'bg-purple-600/15 border-purple-500/50 text-purple-300 shadow-[0_0_15px_rgba(168,85,247,0.1)]' 
+                    ? activeStyle[lvl]
                     : 'bg-[#040814]/80 border-white/5 text-gray-500 hover:border-white/10 hover:text-gray-300'
                 }`}
               >
                 {lvl}
               </button>
-            ))}
+            )})}
           </div>
         </div>
 
@@ -292,7 +338,7 @@ export default function AddPromt({ onAddPrompt }) {
             >
               <Globe className="w-4 h-4 mb-1 text-cyan-400" />
               <div className="text-xs font-bold">Public Option</div>
-              <span className="text-[9px] text-gray-500 block mt-0.5">Free access to all users</span>
+              <span className="text-[9px] text-gray-500 block mt-0.5">Visible to everyone after approval.</span>
             </button>
 
             <button
@@ -306,7 +352,7 @@ export default function AddPromt({ onAddPrompt }) {
             >
               <Lock className="w-4 h-4 mb-1 text-purple-400" />
               <div className="text-xs font-bold">Private Premium</div>
-              <span className="text-[9px] text-gray-500 block mt-0.5">Subscribed only</span>
+              <span className="text-[9px] text-gray-500 block mt-0.5">Only you can access this prompt</span>
             </button>
           </div>
         </div>

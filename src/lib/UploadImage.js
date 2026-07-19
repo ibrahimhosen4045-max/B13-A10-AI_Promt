@@ -27,3 +27,5 @@ export const uploadImage = async (imageFile) => {
    if(!file) return;
    setImageFile(file)
 };
+
+
