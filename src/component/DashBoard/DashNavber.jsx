@@ -9,6 +9,7 @@ import {
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
+import NavLink from '../NavLink'
 
 
 const DashNavber = ({userDetails}) => {
@@ -90,22 +91,13 @@ const DashNavber = ({userDetails}) => {
         <nav className="mt-8 flex-1 space-y-1.5">
           {sidebarLinks.map((link) => {
             const Icon = link.icon
-            const isActive = activeTab === link.id
             return (
-              <Link href={link.href} key={link.id}>
-              <button
-                
-                onClick={() => setActiveTab(link.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
-                  isActive 
-                    ? 'bg-gradient-to-r from-purple-600/20 to-pink-600/5 border border-purple-500/30 text-purple-300 shadow-[0_0_15px_rgba(168,85,247,0.1)]' 
-                    : 'text-gray-400 hover:bg-white/5 hover:text-white'
-                }`}
-              >
-                <Icon className={`w-5 h-5 ${isActive ? 'text-purple-400' : 'text-gray-400'}`} />
+              <NavLink href={link.href} key={link.id}>
+              <button className='flex gap-2 items-centers'>
+                <Icon className="w-5 h-5" />
                 {link.label}
               </button>
-              </Link>
+              </NavLink>
             )
           })}
         </nav>

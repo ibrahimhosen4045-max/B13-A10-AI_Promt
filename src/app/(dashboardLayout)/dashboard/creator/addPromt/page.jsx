@@ -115,17 +115,18 @@ const handleSubmit = async (e) => {
     });
 
     const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data?.message || "Failed to add prompt.");
-      setIsSubmitting(false)
-      return
-    }
-
+    
     if(res.ok){
       toast.success("Prompt added successfully!");
       setIsSubmitting(false)
     }
+
+    if (!res.ok) {
+      setIsSubmitting(false)
+      throw new Error(data?.message || "Failed to add prompt.");
+    }
+
+    
     
 
     // Reset Form
