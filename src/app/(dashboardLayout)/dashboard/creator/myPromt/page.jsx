@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react';
+import React, {  useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Edit3, 
@@ -15,62 +15,45 @@ import {
   HelpCircle,
   Copy
 } from 'lucide-react';
+import { authClient } from '@/lib/auth-client';
+import { Bars } from 'react-loader-spinner';
 
-// প্রাথমিক ডেমো প্রম্পট ডাটাবেস যা সরাসরি ক্রিয়েটরের ড্যাশবোর্ড রিফ্লেক্ট করবে
-const initialPrompts = [
-  {
-    id: 1,
-    title: "Cyberpunk Scarecrow portrait",
-    description: "Generates stunning rustic scarecrow portraits illuminated by dynamic natural golden hour light with intricate procedural details.",
-    content: "Generate a hyper-detailed cinematic portrait of a rustic scarecrow standing in a golden wheat field during midday, volumetric dust, warm color grading, shot on 85mm lens.",
-    category: "Graphics",
-    aiTool: "Midjourney",
-    tags: "Midjourney, Art, Daylight",
-    difficulty: "Beginner",
-    thumbnail: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=400&q=80",
-    visibility: "Public",
-    copyCount: 134,
-    status: "approved",
-    createdAt: "2026-06-15"
-  },
-  {
-    id: 2,
-    title: "Neumorphic Soft Glowing UI",
-    description: "Priscilla coding layout configurations for pristine glassmorphic neumorphic dashboards.",
-    content: "Act as a frontend engineer. Write clean, optimized CSS variables and Tailwind classes to achieve soft realistic shadow depths on dark background.",
-    category: "Coding",
-    aiTool: "GPT prompts",
-    tags: "Tailwind, CSS, Neumorphism",
-    difficulty: "Pro",
-    thumbnail: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=400&q=80",
-    visibility: "Private",
-    copyCount: 42,
-    status: "pending", // Waiting for Admin review
-    createdAt: "2026-07-01"
-  },
-  {
-    id: 3,
-    title: "Double Exposure Forest Silence",
-    description: "Double exposure silhouette of a serene human face merged with deep redwood forest, morning fog.",
-    content: "Artistic blend silhouette of human profile overlayed with dense pine forest, mist rays, highly cinematic and conceptual art style.",
-    category: "Photography",
-    aiTool: "Leonardo AI",
-    tags: "Double Exposure, Nature, Leonardo AI",
-    difficulty: "Intermediate",
-    thumbnail: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=400&q=80",
-    visibility: "Public",
-    copyCount: 210,
-    status: "approved",
-    createdAt: "2026-07-10"
-  }
-];
 
 export default function MyPrompts() {
-  const [prompts, setPrompts] = useState(initialPrompts);
+  const [prompts, setPrompts] = useState([]);
+const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPrompt, setSelectedPrompt] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [toast, setToast] = useState(null);
+
+  const {data: session} = authClient.useSession();
+  const user = session?.user;
+
+  useEffect(()=>{
+    if(!user?.email) return;
+
+    const getMyPromts = async ()=> {
+      try{
+        const res = await fetch(`http://localhost:5500/api/creator/mypromt?email=${user.email}`)
+
+        const data = await res.json();
+        setPrompts(data)
+      } catch (err){
+        console.log(err)
+      } finally {
+        setTimeout(()=>{
+          setLoading(false)
+        },1200)
+        
+      }
+    }
+
+    getMyPromts()
+
+  },[user])
+
+  
 
   // নোটিফিকেশন বা টোস্ট দেখানোর হ্যান্ডলার
   const showToast = (message, type = 'success') => {
@@ -81,9 +64,23 @@ export default function MyPrompts() {
   };
 
   // ১. ডিলিট ফাংশন (কোনো ব্রাউজার confirm অ্যালার্ট ছাড়া)
-  const handleDeletePrompt = (id, title) => {
-    setPrompts(prev => prev.filter(p => p.id !== id));
-    showToast(`"${title}" has been permanently deleted.`, 'error');
+  const handleDeletePrompt =async (id, title) => {
+    try{
+      const res = await fetch(`http://localhost:5500/api/creator/${id}`,{
+        method: "DELETE"
+      });
+      const data = await res.json();
+
+      if(data.deletedCount > 0){
+        setPrompts((prev)=> prev.filter((p)=>p._id !== id))
+        showToast(`"${title}" has been permanently deleted.`, "success");
+      } else {
+        showToast("Feiled to delete promt", "error")
+      }
+    } catch (error){
+      console.log(error)
+      showToast("Something went wrong.", "error")
+    }
   };
 
   // ২. এডিট মোডাল ওপেন করার ফাংশন
@@ -93,16 +90,60 @@ export default function MyPrompts() {
   };
 
   // ৩. আপডেট সেভ করার ফাংশন
-  const handleSaveUpdate = (e) => {
-    e.preventDefault();
-    if (!selectedPrompt.title || !selectedPrompt.description || !selectedPrompt.content) {
-      showToast("Please fill in all the required fields.", "error");
-      return;
+  const handleSaveUpdate = async (e) => {
+    e.preventDefault()
+    
+    if(
+      !selectedPrompt.title ||
+      !selectedPrompt.description ||
+      !selectedPrompt.content 
+    ) {
+      showToast('Please fill in all the requirment fields.', "error")
+      return
     }
 
-    setPrompts(prev => prev.map(p => p.id === selectedPrompt.id ? selectedPrompt : p));
-    setIsEditModalOpen(false);
-    showToast(`"${selectedPrompt.title}" updated successfully!`, 'success');
+    try{
+
+      const res = await fetch(
+        `http://localhost:5500/api/creator/${selectedPrompt._id}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type" : "application/json"
+          },
+          body: JSON.stringify({
+            title: selectedPrompt.title,
+            description: selectedPrompt.description,
+            content: selectedPrompt.content,
+            visibility: selectedPrompt.visibility,
+            difficulty: selectedPrompt.difficulty,
+          })
+        }
+      )
+
+      const data = await res.json()
+
+      if(data.matchedCount > 0){
+        setPrompts((prev) =>
+          prev.map((prompt) =>
+          prompt._id === selectedPrompt._id
+          ? { ...prompt, ...selectedPrompt }
+          : prompt
+            )
+          );
+
+        setIsEditModalOpen(false);
+        showToast(
+        `"${selectedPrompt.title}" updated successfully!`,
+        "success");
+
+      } else {
+      showToast("No changes were made.", "error");
+      }
+
+    } catch (error) {
+      console.log(error)
+      showToast("Something went wrong.", "error")
+    }
   };
 
   // সার্চিং ফিল্টার
@@ -164,6 +205,9 @@ export default function MyPrompts() {
       </div>
 
       {/* Table Container wrapping responsive styles */}
+      {loading? <div className='w-full h-50 flex items-center justify-center'>
+          <Bars height="50" width="50" color="#4fa94d" ariaLabel="bars-loading" wrapperStyle={{}} wrapperClass="" visible={true} />
+        </div> : 
       <div className="overflow-x-auto w-full rounded-2xl border border-white/[0.05] bg-[#040814]/40">
         <table className="w-full text-left border-collapse min-w-[750px]">
           <thead>
@@ -185,7 +229,7 @@ export default function MyPrompts() {
               </tr>
             ) : (
               filteredPrompts.map((prompt) => (
-                <tr key={prompt.id} className="group hover:bg-white/[0.01] transition-all">
+                <tr key={prompt._id} className="group hover:bg-white/[0.01] transition-all">
                   
                   {/* Thumbnail & Title metadata */}
                   <td className="py-4 px-5">
@@ -260,7 +304,7 @@ export default function MyPrompts() {
 
                       {/* Delete Button */}
                       <button
-                        onClick={() => handleDeletePrompt(prompt.id, prompt.title)}
+                        onClick={() => handleDeletePrompt(prompt._id, prompt.title)}
                         className="p-2 rounded-xl bg-red-500/5 border border-red-500/10 hover:border-red-500/30 hover:text-red-400 hover:bg-red-500/10 transition-all"
                         title="Delete Prompt"
                       >
@@ -275,7 +319,7 @@ export default function MyPrompts() {
             )}
           </tbody>
         </table>
-      </div>
+      </div>}
 
   
          

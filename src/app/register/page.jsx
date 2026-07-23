@@ -60,10 +60,12 @@ export default function Register() {
       return
     }
 
-    const imageUrl = await uploadImage(imageFile)
-
+   
+    try {
     setIsLoading(true)
     setError('')
+
+     const imageUrl = await uploadImage(imageFile)
 
     const { data, error } = await authClient.signUp.email({
         name: formData.name, // user display name
@@ -75,21 +77,23 @@ export default function Register() {
     })
 
     if(data){
-      setTimeout(() => {
-        setIsLoading(false)
-      }, 1500)
       toast.success("Register successfull")
       router.push('/')
     }
 
     if(error){
-      
-      setTimeout(() => {
-        setIsLoading(false)
-      }, 1500)
       toast.error(error.message)
       return;
     }
+
+  } catch (err){
+    console.log(err)
+    toast.error(err.message);
+  } finally {
+    setTimeout(() => {
+        setIsLoading(false)
+    }, 1500)
+  }
     
   }
 
