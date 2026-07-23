@@ -154,9 +154,9 @@ const [loading, setLoading] = useState(true);
   );
 
   return (
-    <div className='w-full  relative'>
+    <div className='w-full  relative '>
 
-      <div className="mt-10 w-full max-w-6xl mx-auto bg-[#080d1e]/80 border border-white/[0.08] p-6 sm:p-8 rounded-3xl backdrop-blur-xl shadow-2xl  overflow-hidden">
+      <div className=" mt-10 lg:w-11/12 max-w-6xl mx-auto bg-[#080d1e]/80 border border-white/[0.08] p-6 sm:p-8 rounded-3xl backdrop-blur-xl shadow-2xl  overflow-hidden">
       
       {/* Top Cyberpunk Neon Border Highlight */}
       <span className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500" />
@@ -209,7 +209,7 @@ const [loading, setLoading] = useState(true);
           <Bars height="50" width="50" color="#4fa94d" ariaLabel="bars-loading" wrapperStyle={{}} wrapperClass="" visible={true} />
         </div> : 
       <div className="overflow-x-auto w-full rounded-2xl border border-white/[0.05] bg-[#040814]/40">
-        <table className="w-full text-left border-collapse min-w-[750px]">
+        <table className="w-full text-left border-collapse ">
           <thead>
             <tr className="border-b border-white/[0.08] text-gray-500 text-[10px] uppercase font-bold tracking-widest bg-white/[0.01]">
               <th className="py-4.5 px-5">Prompt Cover Info</th>
