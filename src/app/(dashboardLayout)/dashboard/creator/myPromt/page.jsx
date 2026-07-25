@@ -13,7 +13,10 @@ import {
   Check, 
   AlertCircle,
   HelpCircle,
-  Copy
+  Copy,
+  StickyNotes,
+  Clipboard,
+  Star
 } from 'lucide-react';
 import { authClient } from '@/lib/auth-client';
 import { Bars } from 'react-loader-spinner';
@@ -66,7 +69,7 @@ const [loading, setLoading] = useState(true);
   // ১. ডিলিট ফাংশন (কোনো ব্রাউজার confirm অ্যালার্ট ছাড়া)
   const handleDeletePrompt =async (id, title) => {
     try{
-      const res = await fetch(`http://localhost:5500/api/creator/${id}`,{
+      const res = await fetch(`http://localhost:5500/api/creator/${id}?email=${user.email}`,{
         method: "DELETE"
       });
       const data = await res.json();
@@ -116,6 +119,7 @@ const [loading, setLoading] = useState(true);
             content: selectedPrompt.content,
             visibility: selectedPrompt.visibility,
             difficulty: selectedPrompt.difficulty,
+            creatorEmail: user?.email
           })
         }
       )
@@ -217,6 +221,7 @@ const [loading, setLoading] = useState(true);
               <th className="py-4.5 px-5">Visibility</th>
               <th className="py-4.5 px-5">Mod Status</th>
               <th className="py-4.5 px-5">Copies</th>
+              <th className="py-4.5 px-5">Rating</th>
               <th className="py-4.5 px-5 text-right">Actions Panel</th>
             </tr>
           </thead>
@@ -283,8 +288,20 @@ const [loading, setLoading] = useState(true);
                   </td>
 
                   {/* Usage telemetry indexes */}
-                  <td className="py-4 px-5 font-black text-white">
+                  <td className="h-full py-4 px-5 text-[15px]  ">
+                    <div className='flex items-center gap-0.5'>
+                      <Clipboard size={15} absoluteStrokeWidth  color='#26C6DA'/>
                     {prompt.copyCount}
+                    </div>
+                  </td>
+
+                  {/*total rating*/}
+
+                  <td className="h-full py-4 px-5 text-[15px]  ">
+                    <div className='flex items-center gap-0.5'>
+                      <Star size={15} absoluteStrokeWidth color='#FFA000'/>
+                    {prompt.averageRating}
+                    </div>
                   </td>
 
                   {/* Actions Area */}

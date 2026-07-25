@@ -73,12 +73,12 @@ export default function Register() {
         image: imageUrl, // User image URL (optional)
         password:formData.password,
         role: formData.role || "User" ,
-        callbackURL: "/", 
+        callbackURL: callbackUrl, 
     })
 
     if(data){
       toast.success("Register successfull")
-      router.push('/')
+      router.replace(callbackUrl)
     }
 
     if(error){

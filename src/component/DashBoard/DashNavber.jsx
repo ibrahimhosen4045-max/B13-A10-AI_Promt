@@ -31,7 +31,7 @@ const DashNavber = ({userDetails}) => {
      const getSidebarLinks = (role) => {
     const baseLinks = [{ id: 'overview', label: 'Overview', icon: LayoutDashboard,  href: "/dashboard" }]
     
-    if (role === 'admin') {
+    if (role === 'Admin') {
       return [
         ...baseLinks,
         { id: 'manage-users', label: 'Manage Users', icon: Users, href: '/creator/add' },
@@ -45,14 +45,14 @@ const DashNavber = ({userDetails}) => {
         ...baseLinks,
         { id: 'add-prompt', label: 'Add New Prompt', icon: PlusCircle, href: '/dashboard/creator/addPromt'},
         { id: 'my-prompts', label: 'My Prompts', icon: ListOrdered, href: '/dashboard/creator/myPromt' },
-        { id: 'earnings', label: 'Earnings & Stripe', icon: Wallet, href: '/dashboard/creator/earningStrip' },
+
       ]
     }
     
     // Default Normal User
     return [
       ...baseLinks,
-      { id: 'purchased', label: 'Purchased Prompts', icon: Download, href: '/creator/addPromt' },
+      { id: 'purchased', label: 'Add New Prompt', icon: PlusCircle, href: '/dashboard/users/useAddPromt' },
       { id: 'bookmarks', label: 'My Bookmarks', icon: Bookmark, href: '/creator/add' },
     ]
   }
@@ -92,7 +92,7 @@ const DashNavber = ({userDetails}) => {
           {sidebarLinks.map((link) => {
             const Icon = link.icon
             return (
-              <NavLink href={link.href} key={link.id}>
+              <NavLink href={link.href} key={link.id} >
               <button className='flex gap-2 items-centers'>
                 <Icon className="w-5 h-5" />
                 {link.label}

@@ -15,7 +15,7 @@ import { uploadImage } from '@/lib/UploadImage';
 import toast from 'react-hot-toast';
 import { authClient } from '@/lib/auth-client';
 
-export default function AddPromt() {
+export default function userAddPromt() {
 
 const { data: session } = authClient.useSession();
 const user = session?.user;
@@ -97,21 +97,16 @@ const handleSubmit = async (e) => {
       difficulty,
       thumbnail: imageUrl,
       visibility,
-
-      // Analytics
       copyCount: 0,
-      bookmarkCount: 0,
-      reviewCount: 0,
-      averageRating: 0,
-      viewCount: 0,
+      status: "pending",
 
-      creatorId: user?.id,
-      creatorName: user?.name,
-      creatorEmail: user?.email,
-      creatorImage: user?.image,
+      userId: user?.id,
+      userName: user?.name,
+      userEmail: user?.email,
+      userImage: user?.image,
     };
 
-    const res = await fetch("http://localhost:5500/api/creator", {
+    const res = await fetch("http://localhost:5500/api/user/addPrompt", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -168,10 +163,10 @@ const handleSubmit = async (e) => {
           <Sparkles className="w-3.5 h-3.5 text-pink-500 animate-pulse" /> Prompt Engine
         </div>
         <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
-          <PlusCircle className="w-6 h-6 text-purple-400" /> Create New AI Prompt
+          <PlusCircle className="w-6 h-6 text-purple-400" /> Share Your AI Prompt
         </h2>
         <p className="text-xs text-gray-400 mt-1.5 leading-relaxed">
-          Fill in the details to submit your prompt. Submissions will go through administrative approval guidelines before appearing live on the marketplace.
+          Submit your AI prompt to the community. After admin approval, it will appear on the marketplace.
         </p>
       </div>
 
@@ -326,40 +321,6 @@ const handleSubmit = async (e) => {
                 />
               </>
             )}
-          </div>
-        </div>
-
-        {/* Field 9: Visibility Option selection */}
-        <div>
-          <label className="text-[10px] font-bold uppercase tracking-widest text-purple-400 block mb-2 ml-1">Visibility settings</label>
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              type="button"
-              onClick={() => setVisibility('Public')}
-              className={`p-3.5 rounded-2xl border text-left transition-all duration-300 ${
-                visibility === 'Public' 
-                  ? 'bg-cyan-600/10 border-cyan-500/40 text-white shadow-[0_0_15px_rgba(6,182,212,0.15)]' 
-                  : 'bg-[#040814]/80 border-white/5 text-gray-500 hover:border-white/10'
-              }`}
-            >
-              <Globe className="w-4 h-4 mb-1 text-cyan-400" />
-              <div className="text-xs font-bold">Public Option</div>
-              <span className="text-[9px] text-gray-500 block mt-0.5">Visible to everyone after approval.</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setVisibility('Private')}
-              className={`p-3.5 rounded-2xl border text-left transition-all duration-300 ${
-                visibility === 'Private' 
-                  ? 'bg-purple-600/10 border-purple-500/40 text-white shadow-[0_0_15px_rgba(168,85,247,0.15)]' 
-                  : 'bg-[#040814]/80 border-white/5 text-gray-500 hover:border-white/10'
-              }`}
-            >
-              <Lock className="w-4 h-4 mb-1 text-purple-400" />
-              <div className="text-xs font-bold">Private Premium</div>
-              <span className="text-[9px] text-gray-500 block mt-0.5">Only you can access this prompt</span>
-            </button>
           </div>
         </div>
 

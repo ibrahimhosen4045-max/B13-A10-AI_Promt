@@ -33,7 +33,7 @@ export default function Navber() {
     email: user?.email,
     avatar: user?.image,
     role: user?.role,
-    subscription: "Premium"
+    subscription: user?.premium ? "Premium" : "Free"
   };
 
   const navLinks = [
@@ -166,11 +166,11 @@ export default function Navber() {
                         <div className="p-3 border-b border-white/5 flex flex-col">
                           <span className="text-xs text-gray-400">Signed in as</span>
                           <span className="text-sm font-bold text-white truncate">{userMockData.email}</span>
-                          {userMockData.subscription === 'Premium' && (
+                          {userMockData.subscription === 'Premium' ? (
                             <span className="text-[10px] font-extrabold text-amber-400 mt-1 flex items-center gap-1 uppercase tracking-widest bg-amber-500/10 border border-amber-500/20 w-fit px-2 py-0.5 rounded-full">
                               ⭐ Premium Partner
                             </span>
-                          )}
+                          ) : <span className='text-[10px] font-extrabold text-green-500 mt-1 flex items-center gap-1 uppercase tracking-widest bg-green-500/10 border border-green-500/20 w-fit px-2 py-0.5 rounded-full'> Free user</span>}
                         </div>
 
                         <div className="py-2">
