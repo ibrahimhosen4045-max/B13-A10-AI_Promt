@@ -4,7 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { 
   LayoutDashboard, User, ShieldAlert, Wallet, 
   Bookmark, Shield, PlusCircle, ListOrdered, 
-  Users, AlertTriangle, LogOut, Menu, X, Download
+  Users, AlertTriangle, LogOut, Menu, X, Download,
+  UserCog
 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -53,7 +54,9 @@ const DashNavber = ({userDetails}) => {
     return [
       ...baseLinks,
       { id: 'purchased', label: 'Add New Prompt', icon: PlusCircle, href: '/dashboard/users/useAddPromt' },
+      { id: 'my-prompts', label: 'My Prompts', icon: ListOrdered, href: '/dashboard/users/userMyPromt' },
       { id: 'bookmarks', label: 'My Bookmarks', icon: Bookmark, href: '/creator/add' },
+      { id: 'my-Profile', label: 'My Profile', icon: UserCog , href: '/dashboard/profile' },
     ]
   }
 
@@ -83,7 +86,7 @@ const DashNavber = ({userDetails}) => {
           <img src={user?.avatar} alt={user?.name} className="w-10 h-10 rounded-lg object-cover ring-2 ring-purple-500/30" />
           <div className="truncate">
             <h4 className="text-sm font-semibold truncate">{user?.name}</h4>
-            <p className="text-xs text-gray-400 truncate">{user?.email}</p>
+            <p className="text-xs text-gray-400 truncate">Profile</p>
           </div>
         </div>
 

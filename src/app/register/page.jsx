@@ -8,6 +8,7 @@ import { authClient } from '@/lib/auth-client'
 import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { handleImageUpload, uploadImage } from '@/lib/UploadImage'
+import Link from 'next/link'
 
 export default function Register() {
   const pageName = "REGISTER"
@@ -350,9 +351,9 @@ export default function Register() {
                 </button>
               </div>
                 <span className="text-xs text-gray-500">Already registered on orbit?</span>
-                <a href="#login" className="text-xs font-bold text-purple-400 hover:text-purple-300 transition-colors ml-1.5">
+                <Link href={'/login'} className="text-xs font-bold text-purple-400 hover:text-purple-300 transition-colors ml-1.5">
                   Sign In
-                </a>
+                </Link>
               </div>
             </motion.div>
         </AnimatePresence>
