@@ -6,7 +6,8 @@ import {
   Bookmark, Shield, PlusCircle, ListOrdered, 
   Users, AlertTriangle, LogOut, Menu, X, Download,
   UserCog,
-  House
+  House,
+  SquareChartGantt
 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -36,8 +37,8 @@ const DashNavber = ({userDetails}) => {
     if (role === 'Admin') {
       return [
         ...baseLinks,
-        { id: 'manage-users', label: 'Manage Users', icon: Users, href: '/creator/add' },
-        { id: 'pending-prompts', label: 'Pending Approvals', icon: ShieldAlert, href: '/creator/add' },
+        { id: 'manage-users', label: 'Manage Users', icon: Users, href: '/dashboard/admin/managUser' },
+        { id: 'manage-prompts', label: 'Manage Prompts', icon: SquareChartGantt , href: '/dashboard/admin/managPromt' },
         { id: 'reports', label: 'Reported Prompts', icon: AlertTriangle, href: '/creator/add' },
       ]
     }

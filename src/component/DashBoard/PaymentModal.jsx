@@ -42,16 +42,16 @@ export default function PaymentModal({ isOpen, onClose, userEmail, onSuccess }) 
     );
 
       const data = await res.json();
-      console.log("status", res.status)
-      console.log("response", data)
+      
+      if(!res.ok){
+        toast.error(data.message)
+      }
 
       if (data.success) {
         toast.success(data.message || "Upgraded to Premium successfully!");
         onSuccess(data.user);
         onClose();
-      } else {
-        toast.error(data.message || "Payment failed.");
-      }
+      } 
     } catch (err) {
       toast.error("Something went wrong with the transaction.");
     } finally {

@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { authClient } from '@/lib/auth-client';
 import { Bars } from 'react-loader-spinner';
+import toast from 'react-hot-toast';
 
 
 export default function userMyPrompts() {
@@ -28,7 +29,6 @@ const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPrompt, setSelectedPrompt] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [toast, setToast] = useState(null);
 
   const {data: session} = authClient.useSession();
   const user = session?.user;
@@ -56,15 +56,6 @@ const [loading, setLoading] = useState(true);
 
   },[user])
 
-  
-
-  // নোটিফিকেশন বা টোস্ট দেখানোর হ্যান্ডলার
-  const showToast = (message, type = 'success') => {
-    setToast({ message, type });
-    setTimeout(() => {
-      setToast(null);
-    }, 4000);
-  };
 
   // ১. ডিলিট ফাংশন (কোনো ব্রাউজার confirm অ্যালার্ট ছাড়া)
   const handleDeletePrompt =async (id, title) => {
@@ -74,15 +65,18 @@ const [loading, setLoading] = useState(true);
       });
       const data = await res.json();
 
+      if(!res.ok){
+        toast.error(data.message)
+        return
+      }
+
       if(data.deletedCount > 0){
         setPrompts((prev)=> prev.filter((p)=>p._id !== id))
-        showToast(`"${title}" has been permanently deleted.`, "success");
-      } else {
-        showToast("Feiled to delete promt", "error")
-      }
+        toast.success(`"${title}" has been permanently deleted.`, "success");
+      } 
     } catch (error){
       console.log(error)
-      showToast("Something went wrong.", "error")
+      toast.error("Something went wrong.", "error")
     }
   };
 
@@ -101,7 +95,7 @@ const [loading, setLoading] = useState(true);
       !selectedPrompt.description ||
       !selectedPrompt.content 
     ) {
-      showToast('Please fill in all the requirment fields.', "error")
+      toast.error('Please fill in all the requirment fields.', "error")
       return
     }
 
@@ -126,6 +120,11 @@ const [loading, setLoading] = useState(true);
 
       const data = await res.json()
 
+      if(!res.ok){
+        toast.error(data.message)
+        return
+      }
+
       if(data.matchedCount > 0){
         setPrompts((prev) =>
           prev.map((prompt) =>
@@ -136,17 +135,15 @@ const [loading, setLoading] = useState(true);
           );
 
         setIsEditModalOpen(false);
-        showToast(
+        toast.success(
         `"${selectedPrompt.title}" updated successfully!`,
         "success");
 
-      } else {
-      showToast("No changes were made.", "error");
-      }
+      } 
 
     } catch (error) {
       console.log(error)
-      showToast("Something went wrong.", "error")
+      toast.error("Something went wrong.", "error")
     }
   };
 
@@ -165,21 +162,6 @@ const [loading, setLoading] = useState(true);
       {/* Top Cyberpunk Neon Border Highlight */}
       <span className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500" />
 
-      {/* Dynamic Toast Alert (Replacing default browser alerts) */}
-      {toast && (
-        <div className={`fixed top-6 right-6 z-50 p-4 rounded-2xl border flex items-center gap-3 backdrop-blur-xl shadow-xl transition-all duration-300 ${
-          toast.type === 'success' 
-            ? 'bg-[#061e14]/95 border-emerald-500/30 text-emerald-400' 
-            : 'bg-[#22070e]/95 border-red-500/30 text-red-400'
-        }`}>
-          {toast.type === 'success' ? (
-            <Check className="w-5 h-5 flex-shrink-0 animate-bounce" />
-          ) : (
-            <AlertCircle className="w-5 h-5 flex-shrink-0" />
-          )}
-          <span className="text-xs font-bold">{toast.message}</span>
-        </div>
-      )}
 
       {/* Header Info Banner Section */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 border-b border-white/[0.06] pb-6">

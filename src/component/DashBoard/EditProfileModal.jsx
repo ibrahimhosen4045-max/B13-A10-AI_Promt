@@ -31,13 +31,16 @@ export default function EditProfileModal({ isOpen, onClose, user, onSuccess }) {
 
       const data = await res.json();
 
+      if(!res.ok){
+        toast.error(data.message)
+        return
+      }
+
       if (data.success) {
         toast.success(data.message || "Profile updated!");
         onSuccess(data.user);
         onClose();
-      } else {
-        toast.error(data.message || "Failed to update profile.");
-      }
+      } 
     } catch (err) {
       toast.error("Failed to update profile.");
     } finally {

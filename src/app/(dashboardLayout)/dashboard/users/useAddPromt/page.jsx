@@ -123,7 +123,7 @@ const handleSubmit = async (e) => {
 
     if (!res.ok) {
       setIsSubmitting(false)
-      throw new Error(data?.message || "Failed to add prompt.");
+      toast.error(data.message)
     }
 
     
