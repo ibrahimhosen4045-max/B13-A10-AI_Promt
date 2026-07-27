@@ -21,7 +21,7 @@ export const auth = betterAuth({
           isBlocked: {
             defaultValue: false,
           },
-          premium: {
+          isPremium: {
             defaultValue: false,
           }
         }

@@ -33,8 +33,10 @@ export default function Navber() {
     email: user?.email,
     avatar: user?.image,
     role: user?.role,
-    subscription: user?.premium ? "Premium" : "Free"
+    subscription: user?.isPremium ? "Premium" : "Free"
   };
+
+  console.log(userMockData.subscription)
 
   const navLinks = [
     { name: 'Home', href: '/', isHot: false },

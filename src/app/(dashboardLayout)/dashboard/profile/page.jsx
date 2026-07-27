@@ -73,7 +73,7 @@ export default function ProfilePage() {
   const handleDeleteAccount = async () => {
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500"}/api/user/account`,
+        "http://localhost:5500/api/user-account-delet",
         {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },

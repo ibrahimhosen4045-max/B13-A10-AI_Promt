@@ -5,7 +5,8 @@ import {
   LayoutDashboard, User, ShieldAlert, Wallet, 
   Bookmark, Shield, PlusCircle, ListOrdered, 
   Users, AlertTriangle, LogOut, Menu, X, Download,
-  UserCog
+  UserCog,
+  House
 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -46,6 +47,7 @@ const DashNavber = ({userDetails}) => {
         ...baseLinks,
         { id: 'add-prompt', label: 'Add New Prompt', icon: PlusCircle, href: '/dashboard/creator/addPromt'},
         { id: 'my-prompts', label: 'My Prompts', icon: ListOrdered, href: '/dashboard/creator/myPromt' },
+        { id: 'my-Profile', label: 'My Profile', icon: UserCog , href: '/dashboard/profile' },
 
       ]
     }
@@ -70,7 +72,8 @@ const DashNavber = ({userDetails}) => {
     <div className='h-screen fixed top-0 left-0 bottom-0 z-50'>
             {/* --- SIDEBAR COMPONENT --- */}
       {/* Desktop Sidebar */}
-      <aside className="h-full hidden lg:flex flex-col w-72 bg-[#0d0921]/80 backdrop-blur-xl border-r border-purple-500/10 p-6 z-30 pt-10">
+      <aside className="h-full hidden lg:flex flex-col w-72 bg-[#0d0921]/80 backdrop-blur-xl border-r border-purple-500/10 p-6 z-30 pt-5">
+      
         <div className="flex items-center gap-3 pb-8 border-b border-purple-500/10">
           <div className="p-2.5 bg-gradient-to-tr from-purple-600 to-pink-500 rounded-xl shadow-[0_0_15px_rgba(168,85,247,0.4)]">
             <Shield className="w-6 h-6 text-white" />
@@ -86,7 +89,7 @@ const DashNavber = ({userDetails}) => {
           <img src={user?.avatar} alt={user?.name} className="w-10 h-10 rounded-lg object-cover ring-2 ring-purple-500/30" />
           <div className="truncate">
             <h4 className="text-sm font-semibold truncate">{user?.name}</h4>
-            <p className="text-xs text-gray-400 truncate">Profile</p>
+            <p className="text-xs text-gray-400 truncate">{user?.email}</p>
           </div>
         </div>
 
@@ -104,6 +107,11 @@ const DashNavber = ({userDetails}) => {
             )
           })}
         </nav>
+        <Link href={'/'}>
+        <div className='pb-2 w-full'>
+          <button className='flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-rose-400 hover:bg-rose-500/10 transition-all border border-transparent w-full hover:border-rose-500/20 mt-auto '><House className="w-5 h-5" />Home</button>
+        </div>
+        </Link>
 
         {/* Logout Trigger */}
         

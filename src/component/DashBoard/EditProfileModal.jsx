@@ -21,7 +21,7 @@ export default function EditProfileModal({ isOpen, onClose, user, onSuccess }) {
     setLoading(true);
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500"}/api/user/profile`,
+        `http://localhost:5500/api/user/profile`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

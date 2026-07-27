@@ -29,15 +29,21 @@ export default function PaymentModal({ isOpen, onClose, userEmail, onSuccess }) 
     setLoading(true);
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500"}/api/user/upgrade-premium`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: userEmail, ...formData }),
-        }
-      );
+      "http://localhost:5500/api/user-premium",
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: userEmail,
+        }),
+      }
+    );
 
       const data = await res.json();
+      console.log("status", res.status)
+      console.log("response", data)
 
       if (data.success) {
         toast.success(data.message || "Upgraded to Premium successfully!");
