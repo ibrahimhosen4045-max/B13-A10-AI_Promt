@@ -10,7 +10,6 @@ import PromptsTable from "@/component/DashBoard/admin/PromptsTable";
 import ViewPromptModal from "@/component/DashBoard/admin/ViewPromptModal";
 import DeleteModal from "@/component/DashBoard/admin/DeleteModal";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500";
 
 export default function ManagePromptsPage() {
   const [prompts, setPrompts] = useState([]);
@@ -28,7 +27,7 @@ export default function ManagePromptsPage() {
   const fetchPrompts = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE_URL}/api/admin/prompts`);
+      const res = await fetch("http://localhost:5500/api/admin/all-prompts");
       if (!res.ok) throw new Error("Failed to fetch prompts");
       const data = await res.json();
       setPrompts(Array.isArray(data) ? data : []);
@@ -58,7 +57,7 @@ export default function ManagePromptsPage() {
   const handleApprove = async (id) => {
     setUpdatingId(id);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/admin/prompt/approve/${id}`, {
+      const res = await fetch(`http://localhost:5500/api/admin/prompt/approve/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
       });
@@ -86,7 +85,7 @@ export default function ManagePromptsPage() {
   const handleReject = async (id) => {
     setUpdatingId(id);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/admin/prompt/reject/${id}`, {
+      const res = await fetch(`http://localhost:5500/api/admin/prompt/reject/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
       });
