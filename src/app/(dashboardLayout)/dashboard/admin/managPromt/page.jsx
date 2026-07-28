@@ -113,7 +113,7 @@ export default function ManagePromptsPage() {
   const handleTogglePremium = async (id, currentStatus) => {
     setUpdatingId(id);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/admin/prompt/premium/${id}`, {
+      const res = await fetch(`http://localhost:5500/api/admin/prompt/premium/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isPremium: !currentStatus }),
@@ -147,7 +147,7 @@ export default function ManagePromptsPage() {
     setIsDeleting(true);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/admin/prompt/${promptToDelete._id}`, {
+      const res = await fetch(`http://localhost:5500/api/admin/prompt/${promptToDelete._id}`, {
         method: "DELETE",
       });
       const data = await res.json();

@@ -7,7 +7,8 @@ import {
   Users, AlertTriangle, LogOut, Menu, X, Download,
   UserCog,
   House,
-  SquareChartGantt
+  SquareChartGantt,
+  CreditCard
 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -39,6 +40,7 @@ const DashNavber = ({userDetails}) => {
         ...baseLinks,
         { id: 'manage-users', label: 'Manage Users', icon: Users, href: '/dashboard/admin/managUser' },
         { id: 'manage-prompts', label: 'Manage Prompts', icon: SquareChartGantt , href: '/dashboard/admin/managPromt' },
+        { id: 'payment-history', label: 'Payment History', icon: CreditCard  , href: '/dashboard/admin/paymentHistory' },
         { id: 'reports', label: 'Reported Prompts', icon: AlertTriangle, href: '/creator/add' },
       ]
     }

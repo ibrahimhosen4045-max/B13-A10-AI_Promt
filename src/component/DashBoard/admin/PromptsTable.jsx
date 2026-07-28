@@ -30,6 +30,7 @@ export default function PromptsTable({
   setPromptToDelete,
   updatingId,
 }) {
+    
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -197,7 +198,7 @@ export default function PromptsTable({
                       {/* Role */}
                       <td className="py-4 px-6 whitespace-nowrap">
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700">
-                          {prompt.role || "User"}
+                          {prompt.creatorEmail && "Creator" || "User"}
                         </span>
                       </td>
 
