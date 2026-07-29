@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Star, Copy, Bookmark, Eye, Sparkles, Layers, Zap } from "lucide-react";
+import Link from "next/link";
 
 export default function PromptCard({ prompt, onViewDetails }) {
   const formatDate = (dateString) => {
@@ -124,12 +125,14 @@ export default function PromptCard({ prompt, onViewDetails }) {
         </div>
 
         {/* View Details Button */}
+        <Link href={`/prompt/${prompt._id}`}>
         <button
           onClick={() => onViewDetails(prompt)}
           className="w-full mt-2 py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-gradient-to-r hover:from-cyan-500 hover:to-purple-600 text-xs font-bold text-slate-200 hover:text-white border border-slate-700 hover:border-transparent transition-all duration-300 flex items-center justify-center gap-2 shadow-lg"
         >
           <Eye className="w-4 h-4" /> View Details
         </button>
+        </Link>
       </div>
     </motion.div>
   );

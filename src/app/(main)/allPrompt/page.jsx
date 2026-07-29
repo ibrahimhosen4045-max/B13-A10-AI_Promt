@@ -11,7 +11,7 @@ import FilterBar from "@/component/allPrompt/FilterBar";
 import SearchBar from "@/component/allPrompt/SearchBar";
 
 
-const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 6;
 
 export default function AllPromptsPage() {
   const [prompts, setPrompts] = useState([]);
@@ -208,21 +208,15 @@ export default function AllPromptsPage() {
         </motion.div>
 
         {/* Search Bar */}
-        <SearchBar
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-        />
+        <div className="flex flex-col gap-2">
+          <div className="flex-5">
+            <SearchBar
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            />
+          </div>
 
-        {/* Filters and Sorting Toolbar */}
-        <div className="space-y-4">
-          <FilterBar
-            filters={filters}
-            setFilters={setFilters}
-            resetFilters={resetFilters}
-            activeCount={activeFilterCount}
-          />
-
-          <div className="flex items-center justify-between pt-2">
+          <div className="flex-2 flex items-center justify-between pt-2">
             <span className="text-xs font-semibold text-slate-400">
               Found <span className="text-cyan-400 font-extrabold">{filteredAndSortedPrompts.length}</span> prompts
             </span>
@@ -230,14 +224,28 @@ export default function AllPromptsPage() {
           </div>
         </div>
 
-        {/* Main Grid */}
-        <PromptGrid
-          loading={loading}
-          prompts={paginatedPrompts}
-          onViewDetails={handleViewDetails}
-          resetFilters={resetFilters}
-        />
+        <div className="flex flex-col md:flex-row gap-4 lg:gap-7">
+          {/* Filters and Sorting Toolbar */}
+          <div className="flex-4 xl:flex-3">
+            <FilterBar
+              filters={filters}
+              setFilters={setFilters}
+              resetFilters={resetFilters}
+              activeCount={activeFilterCount}
+            />  
+          </div>
 
+          {/* Main Grid */}
+          <div className="flex-10 ">
+            <PromptGrid
+            loading={loading}
+            prompts={paginatedPrompts}
+            onViewDetails={handleViewDetails}
+           resetFilters={resetFilters}
+          />
+          </div>
+
+        </div>
         {/* Pagination */}
         {!loading && (
           <Pagination
