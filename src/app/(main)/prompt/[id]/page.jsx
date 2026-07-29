@@ -18,6 +18,7 @@ import PromptDetailsSkeleton from "@/component/detailsPromt/PromptDetailsSkeleto
 import { authClient } from "@/lib/auth-client";
 
 
+
 export default function PromptDetailsPage({ params }) {
   const { id } = use(params);
 
@@ -27,6 +28,9 @@ export default function PromptDetailsPage({ params }) {
   const [prompt, setPrompt] = useState(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [userRating, setUserRating] = useState(0);
+  const [reviews, setReviews] = useState([]);
 
   // Modals
   const [reportOpen, setReportOpen] = useState(false);
@@ -57,7 +61,71 @@ export default function PromptDetailsPage({ params }) {
     }
   }, [id]);
 
-console.log(prompt)
+  const fetchBookmarkStatus = async () => {
+  try {
+    const res = await fetch(
+      `http://localhost:5500/api/bookmark/check?promptId=${id}&email=${user?.email}`
+    );
+
+    const data = await res.json();
+
+    console.log(data)
+
+    if (res.ok) {
+      setIsBookmarked(data.bookmarked);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+useEffect(() => {
+  if (user?.email) {
+    fetchBookmarkStatus();
+  }
+}, [user?.email, id]);
+
+
+const fetchUserRating = async () => {
+  const res = await fetch(
+    `http://localhost:5500/api/rating/check?promptId=${id}&email=${user.email}`
+  );
+
+  const data = await res.json();
+
+  console.log(data)
+
+  if (res.ok) {
+    setUserRating(data.rating);
+  }
+};
+
+const fetchReviews = async () => {
+  try {
+    const res = await fetch(
+      `http://localhost:5500/api/review/${id}`
+    );
+
+    const data = await res.json();
+
+    if (res.ok) {
+      setReviews(data.data);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+useEffect(() => {
+  fetchReviews();
+}, [id]);
+
+useEffect(() => {
+  if (user?.email) {
+    fetchUserRating();
+  }
+}, [user]);
+
   useEffect(() => {
     fetchPromptDetails();
   }, [fetchPromptDetails]);
@@ -99,12 +167,13 @@ console.log(prompt)
           
           {/* Left Main Content */}
           <div className="lg:col-span-2 space-y-8">
-            <PromptContent description={prompt.description} prompt={prompt} openPremiumModal={() => setPremiumOpen(true)}/>
+            <PromptContent description={prompt.description} prompt={prompt} openPremiumModal={() => setPremiumOpen(true)} user={user}/>
 
             {/* Actions Bar */}
             <div className="flex items-center gap-3">
               <div className="flex-1">
                 <CopyButton
+                user={user}
                   prompt={prompt}
                   currentUser={currentUser}
                   onCopySuccess={() =>
@@ -114,25 +183,37 @@ console.log(prompt)
                 />
               </div>
               <BookmarkButton
+              prompt={prompt}
+              user={user}
               userEmail={user?.email}
                 promptId={prompt._id || prompt.id}
-                isBookmarkedInitial={Boolean(prompt.isBookmarked)}
-                onBookmarkToggle={(delta) =>
+                isBookmarkedInitial={isBookmarked}
+                onBookmarkToggle={(delta) =>{
+                  setIsBookmarked((prev) => !prev);
                   setPrompt((p) => ({
                     ...p,
                     bookmarkCount: Math.max(0, (p.bookmarkCount || 0) + delta),
                   }))
-                }
+                }}
               />
             </div>
 
             {/* Rating & Review Section */}
-            <div className="p-6 rounded-3xl bg-slate-900/50 border border-slate-800/80 space-y-6">
+            {
+              !user?.isPremium && prompt?.isPremium ?
+              <div className="p-6 rounded-3xl bg-slate-900/50 border border-slate-800/80 space-y-6 text-center"> Please Upgrate premium</div> :
+              <div>
+                <div className="p-6 rounded-3xl bg-slate-900/50 border border-slate-800/80 space-y-6">
               <div className="flex justify-between items-center">
                 <RatingSection
-                  promptId={prompt._id || prompt.id}
-                  userRating={prompt.userRating}
-                  onRatingUpdated={fetchPromptDetails}
+                  promptId={prompt._id}
+                  userEmail={user?.email}
+                  userName={user?.name}
+                  userRating={userRating}
+                  onRatingUpdated={()=>{
+                      fetchPromptDetails();
+                      fetchUserRating();
+                  }}
                 />
                 <button
                   onClick={() => setReportOpen(true)}
@@ -143,18 +224,27 @@ console.log(prompt)
               </div>
 
               <ReviewForm
-                promptId={prompt._id || prompt.id}
-                userRating={prompt.userRating}
-                onReviewAdded={fetchPromptDetails}
+                promptId={prompt._id}
+                userEmail={user?.email}
+                userName={user?.name}
+                userImage={user?.image}
+                userRating={userRating}
+                
+                onReviewAdded={() => {
+                  fetchPromptDetails();
+                  fetchReviews();
+                }}
               />
 
               <div className="space-y-3 pt-4 border-t border-slate-800/60">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
                   Reviews ({prompt.reviews?.length || 0})
                 </h4>
-                <ReviewList reviews={prompt.reviews} />
+                <ReviewList reviews={reviews} />
               </div>
             </div>
+              </div>
+            }
 
           </div>
 
@@ -169,7 +259,9 @@ console.log(prompt)
       <ReportModal
         isOpen={reportOpen}
         onClose={() => setReportOpen(false)}
-        promptId={prompt._id || prompt.id}
+        promptId={prompt._id}
+        userEmail={user?.email}
+        userName={user?.name}
       />
       <PremiumModal
         isOpen={premiumOpen}

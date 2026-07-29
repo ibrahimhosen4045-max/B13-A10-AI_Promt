@@ -5,9 +5,14 @@ import { useState } from "react";
 import { Send } from "lucide-react";
 import toast from "react-hot-toast";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500";
 
-export default function ReviewForm({ promptId, userRating, onReviewAdded }) {
+export default function ReviewForm({ promptId,
+  userEmail,
+  userName,
+  userImage,
+  userRating,
+  onReviewAdded, }) {
+    
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -17,10 +22,10 @@ export default function ReviewForm({ promptId, userRating, onReviewAdded }) {
 
     try {
       setSubmitting(true);
-      const res = await fetch(`${API_BASE_URL}/api/prompt/review`, {
+      const res = await fetch(`http://localhost:5500/api/review`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ promptId, rating: userRating || 5, comment }),
+        body: JSON.stringify({ promptId, userEmail, userName, userImage, rating: userRating || 5, review: comment, }),
       });
 
       if (!res.ok) throw new Error();

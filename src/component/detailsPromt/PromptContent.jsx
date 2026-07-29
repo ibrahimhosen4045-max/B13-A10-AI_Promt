@@ -2,12 +2,8 @@
 
 import { Terminal } from "lucide-react";
 
-export default function PromptContent({ description, prompt, openPremiumModal, currentUser }) {
+export default function PromptContent({ description, prompt, openPremiumModal, user }) {
 
-  // if (prompt.isPremium && (!currentUser || !currentUser.isPremium)) {
-  //     openPremiumModal();
-  //     return;
-  //   }
   return (
     <div className="space-y-6">
       {/* Description */}
@@ -33,7 +29,7 @@ export default function PromptContent({ description, prompt, openPremiumModal, c
 
   <pre
     className={`font-mono text-xs sm:text-sm text-cyan-200/90 whitespace-pre-wrap break-words leading-relaxed transition duration-300 ${
-      prompt.isPremium && !currentUser?.isPremium
+      prompt.isPremium && !user?.isPremium
         ? "blur-md select-none pointer-events-none"
         : ""
     }`}
@@ -41,11 +37,11 @@ export default function PromptContent({ description, prompt, openPremiumModal, c
     {prompt.content}
   </pre>
 
-  {prompt.isPremium && !currentUser?.isPremium && (
+  {prompt.isPremium && !user?.isPremium && (
     <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/50 backdrop-blur-[2px]">
       <div className="max-w-sm text-center px-6">
         <h3 className="text-xl font-bold text-white">
-          🔒 Premium Prompt
+          🔒 Premium Prompt 
         </h3>
 
         <p className="mt-2 text-sm text-slate-300">

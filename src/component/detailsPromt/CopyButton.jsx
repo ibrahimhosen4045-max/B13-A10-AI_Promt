@@ -6,12 +6,12 @@ import { Copy, Check, Sparkles } from "lucide-react";
 import toast from "react-hot-toast";
 
 
-export default function CopyButton({ prompt, currentUser, onCopySuccess, openPremiumModal }) {
+export default function CopyButton({ prompt, currentUser, onCopySuccess, openPremiumModal, user }) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
     // Premium Check
-    if (prompt.isPremium && (!currentUser || !currentUser.isPremium)) {
+    if (prompt.isPremium && (!currentUser || !user.isPremium)) {
       openPremiumModal();
       return;
     }
@@ -49,7 +49,7 @@ export default function CopyButton({ prompt, currentUser, onCopySuccess, openPre
         </>
       ) : (
         <>
-          {prompt.isPremium ? <Sparkles className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+          {prompt.isPremium && !user?.isPremium ? <Sparkles className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
           Copy Prompt
         </>
       )}

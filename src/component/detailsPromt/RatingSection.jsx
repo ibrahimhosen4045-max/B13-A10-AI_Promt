@@ -1,32 +1,54 @@
 // src/components/prompt-details/RatingSection.jsx
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Star } from "lucide-react";
 import toast from "react-hot-toast";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500";
 
-export default function RatingSection({ promptId, userRating, onRatingUpdated }) {
+export default function RatingSection({ promptId, userRating, onRatingUpdated, userEmail,  userName }) {
   const [hoverRating, setHoverRating] = useState(0);
   const [rating, setRating] = useState(userRating || 0);
 
-  const handleRate = async (val) => {
-    try {
-      setRating(val);
-      const res = await fetch(`${API_BASE_URL}/api/prompt/rating`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ promptId, rating: val }),
-      });
-      if (!res.ok) throw new Error();
+  useEffect(() => {
+    setRating(userRating || 0);
+}, [userRating]);
 
-      toast.success("Rating submitted.");
-      onRatingUpdated(val);
-    } catch {
-      toast.error("Failed to submit rating.");
+const handleRate = async (val) => {
+  try {
+    setRating(val);
+
+    const res = await fetch("http://localhost:5500/api/rating", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        promptId,
+        userEmail,
+        userName,
+        rating: val,
+      }),
+    });
+
+    const data = await res.json();
+
+    console.log(res.status);
+    console.log(data);
+
+    if (!res.ok) {
+      toast.error(data.message);
+      return;
     }
-  };
+
+    toast.success(data.message);
+
+    onRatingUpdated();
+  } catch (error) {
+    console.log(error);
+    toast.error("Failed to submit rating");
+  }
+};
 
   return (
     <div className="space-y-2">

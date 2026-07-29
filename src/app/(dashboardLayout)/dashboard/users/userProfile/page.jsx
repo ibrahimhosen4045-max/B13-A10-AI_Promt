@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
-  User as UserIcon,
+  User,
   Mail,
   Shield,
   Calendar,
@@ -12,16 +12,13 @@ import {
   CheckCircle2,
   AlertTriangle,
   LogOut,
+  Trash2,
   Bookmark,
   FileCheck,
   Clock,
   FileText,
   Loader2,
-  Copy,
-  Star,
-  Flag,
-  Users,
-  UserCheck,
+  X,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { authClient } from "@/lib/auth-client";
@@ -32,48 +29,28 @@ export default function ProfilePage() {
   const { data: session, isPending: isSessionPending } = authClient.useSession();
 
   const [userData, setUserData] = useState(null);
-  const [stats, setStats] = useState({});
+  const [stats, setStats] = useState({ totalSubmitted: 0, approved: 0, pending: 0, saved: 0 });
   const [loading, setLoading] = useState(true);
 
   // Modals Visibility State
   const [isPayOpen, setIsPayOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  // Current active user reference
-  const user = userData || session?.user;
-  const role = user?.role || "User";
-
-  // Single dynamic fetch function depending on user role
-  const fetchDashboardData = useCallback(async (userEmail, userRole) => {
-    if (!userEmail) return;
-
+  const fetchProfileStats = useCallback(async (email) => {
     try {
       setLoading(true);
-      let url = "";
-
-      if (userRole === "Creator") {
-        url = `http://localhost:5500/api/creator/dashboard?email=${encodeURIComponent(userEmail)}`;
-      } else if (userRole === "Admin") {
-        url = "http://localhost:5500/api/admin/dashboard-overview";
-      } else {
-        url = `http://localhost:5500/api/user/profile-stats?email=${encodeURIComponent(userEmail)}`;
-      }
-
-      const res = await fetch(url);
-      if (!res.ok) {
-        throw new Error(`Failed to fetch dashboard data (Status: ${res.status})`);
-      }
-
+      const res = await fetch(
+        `http://localhost:5500/api/user/profile-stats?email=${encodeURIComponent(email)}`
+      );
       const data = await res.json();
 
-      if (data.success || data.stats || data) {
-        if (data.user) {
-          setUserData(data.user);
-        }
-        setStats(data.stats || data);
+      if (data.success) {
+        setUserData(data.user);
+        setStats(data.stats);
       }
     } catch (err) {
-      toast.error(err.message || "Failed to load dashboard metrics.");
+      toast.error("Failed to load user profile metrics.");
     } finally {
       setLoading(false);
     }
@@ -81,128 +58,42 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (session?.user?.email) {
-      const activeRole = userData?.role || session.user.role || "User";
-      fetchDashboardData(session.user.email, activeRole);
+      fetchProfileStats(session.user.email);
     } else if (!isSessionPending && !session) {
       setLoading(false);
     }
-  }, [session, isSessionPending, fetchDashboardData]);
+  }, [session, isSessionPending, fetchProfileStats]);
 
-  const handleSignOut = useCallback(async () => {
+  const handleSignOut = async () => {
+    await authClient.signOut();
+    toast.success("Logged out successfully.");
+    window.location.href = "/login";
+  };
+
+  const handleDeleteAccount = async () => {
     try {
-      await authClient.signOut();
-      toast.success("Logged out successfully.");
-      window.location.href = "/login";
+      const res = await fetch(
+        "http://localhost:5500/api/user-account-delet",
+        {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: session?.user?.email }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (data.success) {
+        toast.success("Account deleted.");
+        await authClient.signOut();
+        window.location.href = "/";
+      } else {
+        toast.error(data.message);
+      }
     } catch (err) {
-      toast.error("Failed to sign out.");
+      toast.error("Failed to delete account.");
     }
-  }, []);
-
-  // Compute cards dynamic array based on Role
-  const cards = useMemo(() => {
-    if (role === "Creator") {
-      return [
-        {
-          label: "Total Prompts",
-          val: stats.totalSubmitted ?? stats.totalPrompts ?? 0,
-          icon: FileText,
-          color: "text-blue-400",
-          border: "hover:border-blue-500/40",
-        },
-        {
-          label: "Approved Prompts",
-          val: stats.approved ?? 0,
-          icon: FileCheck,
-          color: "text-emerald-400",
-          border: "hover:border-emerald-500/40",
-        },
-        {
-          label: "Pending Prompts",
-          val: stats.pending ?? 0,
-          icon: Clock,
-          color: "text-amber-400",
-          border: "hover:border-amber-500/40",
-        },
-        {
-          label: "Total Copies",
-          val: stats.totalCopies ?? stats.copies ?? 0,
-          icon: Copy,
-          color: "text-cyan-400",
-          border: "hover:border-cyan-500/40",
-        },
-      ];
-    }
-
-    if (role === "Admin") {
-      return [
-        {
-          label: "Total Users",
-          val: stats.totalUsers ?? 0,
-          icon: Users,
-          color: "text-cyan-400",
-          border: "hover:border-cyan-500/40",
-        },
-        {
-          label: "Total Creators",
-          val: stats.totalCreators ?? 0,
-          icon: UserCheck,
-          color: "text-purple-400",
-          border: "hover:border-purple-500/40",
-        },
-        {
-          label: "Total Prompts",
-          val: stats.totalPrompts ?? 0,
-          icon: FileText,
-          color: "text-indigo-400",
-          border: "hover:border-indigo-500/40",
-        },
-        {
-          label: "Total Reports",
-          val: stats.totalReports ?? stats.reports ?? 0,
-          icon: Flag,
-          color: "text-rose-400",
-          border: "hover:border-rose-500/40",
-        },
-      ];
-    }
-
-    // Default Role = User
-    return [
-      {
-        label: "Saved Prompts",
-        val: stats.saved ?? 0,
-        icon: Bookmark,
-        color: "text-purple-400",
-        border: "hover:border-purple-500/40",
-      },
-      {
-        label: "Copied Prompts",
-        val: stats.copies ?? 0,
-        icon: Copy,
-        color: "text-cyan-400",
-        border: "hover:border-cyan-500/40",
-      },
-      {
-        label: "Reviews",
-        val: stats.reviews ?? 0,
-        icon: Star,
-        color: "text-amber-400",
-        border: "hover:border-amber-500/40",
-      },
-      {
-        label: "Reports",
-        val: stats.reports ?? 0,
-        icon: Flag,
-        color: "text-rose-400",
-        border: "hover:border-rose-500/40",
-      },
-    ];
-  }, [role, stats]);
-
-  console.log({
-  role: session?.user?.role,
-  session: session?.user,
-})
+  };
 
   if (isSessionPending || loading) {
     return (
@@ -213,9 +104,12 @@ export default function ProfilePage() {
     );
   }
 
+  const user = userData || session?.user;
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-4 sm:p-6 lg:p-8">
       <div className="max-w-6xl mx-auto space-y-8">
+        
         {/* SECTION 1: PROFILE HEADER */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -228,12 +122,12 @@ export default function ProfilePage() {
                 {user?.image ? (
                   <img
                     src={user.image}
-                    alt={user.name || "User Avatar"}
+                    alt={user.name}
                     className="w-24 h-24 rounded-full object-cover border-2 border-indigo-500/50 shadow-xl"
                   />
                 ) : (
                   <div className="w-24 h-24 rounded-full bg-indigo-600/20 border-2 border-indigo-500/40 flex items-center justify-center text-indigo-400">
-                    <UserIcon className="w-10 h-10" />
+                    <User className="w-10 h-10" />
                   </div>
                 )}
                 {user?.isPremium && (
@@ -248,7 +142,7 @@ export default function ProfilePage() {
 
               <div className="space-y-1.5">
                 <div className="flex items-center justify-center sm:justify-start gap-2">
-                  <h1 className="text-2xl font-bold text-white">{user?.name || "User"}</h1>
+                  <h1 className="text-2xl font-bold text-white">{user?.name}</h1>
                   {user?.isPremium && (
                     <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                       PRO
@@ -260,7 +154,7 @@ export default function ProfilePage() {
                 </p>
                 <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-xs text-slate-500 pt-1">
                   <span className="flex items-center gap-1 bg-slate-800/60 px-2.5 py-1 rounded-md border border-slate-700/50">
-                    <Shield className="w-3 h-3 text-purple-400" /> {role}
+                    <Shield className="w-3 h-3 text-purple-400" /> {user?.role || "User"}
                   </span>
                   <span className="flex items-center gap-1 bg-slate-800/60 px-2.5 py-1 rounded-md border border-slate-700/50">
                     <Calendar className="w-3 h-3 text-indigo-400" /> Joined{" "}
@@ -281,7 +175,12 @@ export default function ProfilePage() {
 
         {/* SECTION 2: STATS CARDS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {cards.map((item, idx) => {
+          {[
+            { label: "Total Prompts", val: stats.totalSubmitted, icon: FileText, color: "text-blue-400", border: "hover:border-blue-500/40" },
+            { label: "Approved", val: stats.approved, icon: FileCheck, color: "text-emerald-400", border: "hover:border-emerald-500/40" },
+            { label: "Pending", val: stats.pending, icon: Clock, color: "text-amber-400", border: "hover:border-amber-500/40" },
+            { label: "Saved Prompts", val: stats.saved, icon: Bookmark, color: "text-purple-400", border: "hover:border-purple-500/40" },
+          ].map((item, idx) => {
             const Icon = item.icon;
             return (
               <motion.div
@@ -315,7 +214,7 @@ export default function ProfilePage() {
                 </div>
                 <h3 className="text-xl font-bold text-white mt-2">Lifetime Access Active</h3>
                 <p className="text-xs text-slate-400">
-                  Activated on: {new Date(user?.premiumSince || Date.now()).toLocaleDateString()}
+                  Activated on: {new Date(user?.premiumSince).toLocaleDateString()}
                 </p>
               </div>
               <div className="px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 font-semibold text-sm">
@@ -352,14 +251,14 @@ export default function ProfilePage() {
           )}
         </motion.div>
 
-        {/* SECTION 4: ACCOUNT CONTROLS */}
+        {/* SECTION 4: DANGER ZONE */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-3xl bg-slate-900/60 border border-slate-800/80 p-6 backdrop-blur-xl space-y-4"
+          className="rounded-3xl bg-rose-950/10 border border-rose-500/20 p-6 backdrop-blur-xl space-y-4"
         >
-          <h3 className="text-lg font-bold text-slate-200 flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-amber-400" /> Account Controls
+          <h3 className="text-lg font-bold text-rose-400 flex items-center gap-2">
+            <AlertTriangle className="w-5 h-5" /> Account Controls
           </h3>
           <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
             <div>
@@ -371,6 +270,19 @@ export default function ProfilePage() {
               className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 rounded-xl transition"
             >
               <LogOut className="w-4 h-4" /> Sign Out
+            </button>
+          </div>
+
+          <div className="border-t border-rose-500/10 pt-4 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <p className="text-sm font-semibold text-rose-300">Permanent Removal</p>
+              <p className="text-xs text-slate-400">Delete your user profile, submitted prompts, and saved history forever.</p>
+            </div>
+            <button
+              onClick={() => setIsDeleteOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-rose-600 hover:bg-rose-500 rounded-xl transition shadow-lg shadow-rose-600/20"
+            >
+              <Trash2 className="w-4 h-4" /> Delete Account
             </button>
           </div>
         </motion.div>
@@ -390,6 +302,42 @@ export default function ProfilePage() {
         user={user}
         onSuccess={(updatedUser) => setUserData(updatedUser)}
       />
+
+      {/* Standard Tailwind Delete Confirmation Modal */}
+      {isDeleteOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden text-slate-100">
+            <div className="flex items-center justify-between p-5 border-b border-slate-800">
+              <h2 className="text-lg font-bold text-rose-400">Confirm Account Deletion</h2>
+              <button
+                onClick={() => setIsDeleteOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-5">
+              <p className="text-sm text-slate-300">
+                Are you absolutely sure you want to delete your account? This action cannot be undone and will erase all your prompts and saved data.
+              </p>
+            </div>
+            <div className="flex items-center justify-end gap-3 p-5 border-t border-slate-800 bg-slate-900/50">
+              <button
+                onClick={() => setIsDeleteOpen(false)}
+                className="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white rounded-xl hover:bg-slate-800 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteAccount}
+                className="px-5 py-2 text-sm font-semibold text-white bg-rose-600 hover:bg-rose-500 rounded-xl transition shadow-lg shadow-rose-600/20"
+              >
+                Yes, Delete Everything
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

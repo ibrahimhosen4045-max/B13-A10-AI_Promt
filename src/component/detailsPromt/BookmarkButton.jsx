@@ -1,19 +1,25 @@
 // src/components/prompt-details/BookmarkButton.jsx
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Bookmark } from "lucide-react";
 import toast from "react-hot-toast";
 
-export default function BookmarkButton({ promptId, isBookmarkedInitial, onBookmarkToggle, userEmail }) {
+export default function BookmarkButton({ promptId, isBookmarkedInitial, onBookmarkToggle, userEmail, prompt, user }) {
   const [bookmarked, setBookmarked] = useState(isBookmarkedInitial);
   const [loading, setLoading] = useState(false);
   
+  
   const handleToggle = async () => {
     try {
+      if(!user?.isPremium && prompt?.isPremium){
+          toast.error("Please Upgrade premium")
+          return
+        }
       setLoading(true);
       if (!bookmarked) {
         // Save Bookmark
+        
         const res = await fetch(`http://localhost:5500/api/bookmark`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -39,6 +45,10 @@ export default function BookmarkButton({ promptId, isBookmarkedInitial, onBookma
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+  setBookmarked(isBookmarkedInitial);
+}, [isBookmarkedInitial]);
 
   return (
     <button

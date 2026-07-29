@@ -36,7 +36,7 @@ export default function CreatorCard({ prompt }) {
             <span className="flex items-center gap-1.5 text-slate-400">
               <Eye className="w-3.5 h-3.5 text-cyan-400" /> Total Views
             </span>
-            <span className="font-bold text-white">{prompt.views ?? 0}</span>
+            <span className="font-bold text-white">{prompt.viewCount ?? 0}</span>
           </div>
           <div className="flex justify-between py-1 border-b border-slate-800/60 text-slate-300">
             <span className="flex items-center gap-1.5 text-slate-400">

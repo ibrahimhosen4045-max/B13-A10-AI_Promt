@@ -41,7 +41,7 @@ const DashNavber = ({userDetails}) => {
         { id: 'manage-users', label: 'Manage Users', icon: Users, href: '/dashboard/admin/managUser' },
         { id: 'manage-prompts', label: 'Manage Prompts', icon: SquareChartGantt , href: '/dashboard/admin/managPromt' },
         { id: 'payment-history', label: 'Payment History', icon: CreditCard  , href: '/dashboard/admin/paymentHistory' },
-        { id: 'reports', label: 'Reported Prompts', icon: AlertTriangle, href: '/creator/add' },
+        { id: 'reports', label: 'Reported Prompts', icon: AlertTriangle, href: '/dashboard/admin/reportedPromt' },
       ]
     }
     
@@ -60,8 +60,8 @@ const DashNavber = ({userDetails}) => {
       ...baseLinks,
       { id: 'purchased', label: 'Add New Prompt', icon: PlusCircle, href: '/dashboard/users/useAddPromt' },
       { id: 'my-prompts', label: 'My Prompts', icon: ListOrdered, href: '/dashboard/users/userMyPromt' },
-      { id: 'bookmarks', label: 'My Bookmarks', icon: Bookmark, href: '/creator/add' },
-      { id: 'my-Profile', label: 'My Profile', icon: UserCog , href: '/dashboard/profile' },
+      { id: 'bookmarks', label: 'My Bookmarks', icon: Bookmark, href: '/dashboard/users/bookmark' },
+      { id: 'my-Profile', label: 'My Profile', icon: UserCog , href: '/dashboard/users/userProfile' },
     ]
   }
 

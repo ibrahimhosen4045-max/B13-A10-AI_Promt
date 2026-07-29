@@ -6,9 +6,13 @@ import { Flag, X, Send } from "lucide-react";
 import toast from "react-hot-toast";
 
 const REPORT_REASONS = ["Spam", "Copyright", "Harmful", "Fake", "Other"];
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500";
 
-export default function ReportModal({ isOpen, onClose, promptId }) {
+
+export default function ReportModal({ isOpen,
+  onClose,
+  promptId,
+  userEmail,
+  userName }) {
   const [reason, setReason] = useState("Spam");
   const [explanation, setExplanation] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -19,13 +23,19 @@ export default function ReportModal({ isOpen, onClose, promptId }) {
     e.preventDefault();
     try {
       setSubmitting(true);
-      const res = await fetch(`${API_BASE_URL}/api/report`, {
+      const res = await fetch(`http://localhost:5500/api/report`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ promptId, reason, explanation }),
+        body: JSON.stringify({ promptId,
+          userEmail,
+          userName,
+          reason,
+          description: explanation, }),
       });
 
-      if (!res.ok) throw new Error("Failed to submit report");
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.message);
 
       toast.success("Report submitted successfully.");
       onClose();
