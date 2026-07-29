@@ -42,6 +42,7 @@ const DashNavber = ({userDetails}) => {
         { id: 'manage-prompts', label: 'Manage Prompts', icon: SquareChartGantt , href: '/dashboard/admin/managPromt' },
         { id: 'payment-history', label: 'Payment History', icon: CreditCard  , href: '/dashboard/admin/paymentHistory' },
         { id: 'reports', label: 'Reported Prompts', icon: AlertTriangle, href: '/dashboard/admin/reportedPromt' },
+        { id: 'my-Profile', label: 'My Profile', icon: UserCog , href: '/dashboard/profile' },
       ]
     }
     
