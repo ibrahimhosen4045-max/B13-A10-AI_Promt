@@ -52,11 +52,11 @@ export default function ProfilePage() {
       let url = "";
 
       if (userRole === "Creator") {
-        url = `http://localhost:5500/api/creator/dashboard?email=${encodeURIComponent(userEmail)}`;
+        url = `${process.env.NEXT_PUBLIC_URI}/api/creator/dashboard?email=${encodeURIComponent(userEmail)}`;
       } else if (userRole === "Admin") {
-        url = "http://localhost:5500/api/admin/dashboard-overview";
+        url = `${process.env.NEXT_PUBLIC_URI}/api/admin/dashboard-overview`;
       } else {
-        url = `http://localhost:5500/api/user/profile-stats?email=${encodeURIComponent(userEmail)}`;
+        url = `${process.env.NEXT_PUBLIC_URI}/api/user/profile-stats?email=${encodeURIComponent(userEmail)}`;
       }
 
       const res = await fetch(url);

@@ -41,7 +41,7 @@ export default function ProfilePage() {
     try {
       setLoading(true);
       const res = await fetch(
-        `http://localhost:5500/api/user/profile-stats?email=${encodeURIComponent(email)}`
+        `${process.env.NEXT_PUBLIC_URI}/api/user/profile-stats?email=${encodeURIComponent(email)}`
       );
       const data = await res.json();
 
@@ -73,7 +73,7 @@ export default function ProfilePage() {
   const handleDeleteAccount = async () => {
     try {
       const res = await fetch(
-        "http://localhost:5500/api/user-account-delet",
+        `${process.env.NEXT_PUBLIC_URI}/api/user-account-delet`,
         {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },

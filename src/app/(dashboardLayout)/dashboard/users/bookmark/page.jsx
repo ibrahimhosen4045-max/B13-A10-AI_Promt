@@ -32,7 +32,7 @@ export default function BookmarksPage() {
       setLoading(true);
 
       const res = await fetch(
-        `http://localhost:5500/api/bookmark?email=${encodeURIComponent(
+        `${process.env.NEXT_PUBLIC_URI}/api/bookmark?email=${encodeURIComponent(
           session.user.email
         )}`
       );
@@ -65,7 +65,7 @@ export default function BookmarksPage() {
 
     try {
       const res = await fetch(
-        `http://localhost:5500/api/bookmark/${promptId}?email=${encodeURIComponent(
+        `${process.env.NEXT_PUBLIC_URI}/api/bookmark/${promptId}?email=${encodeURIComponent(
           session.user.email
         )}`,
         {

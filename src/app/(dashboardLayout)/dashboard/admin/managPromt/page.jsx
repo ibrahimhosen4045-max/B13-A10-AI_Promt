@@ -27,7 +27,7 @@ export default function ManagePromptsPage() {
   const fetchPrompts = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:5500/api/admin/all-prompts");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URI}/api/admin/all-prompts`);
       if (!res.ok) throw new Error("Failed to fetch prompts");
       const data = await res.json();
       setPrompts(Array.isArray(data) ? data : []);
@@ -57,7 +57,7 @@ export default function ManagePromptsPage() {
   const handleApprove = async (id) => {
     setUpdatingId(id);
     try {
-      const res = await fetch(`http://localhost:5500/api/admin/prompt/approve/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URI}/api/admin/prompt/approve/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
       });
@@ -85,7 +85,7 @@ export default function ManagePromptsPage() {
   const handleReject = async (id) => {
     setUpdatingId(id);
     try {
-      const res = await fetch(`http://localhost:5500/api/admin/prompt/reject/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URI}/api/admin/prompt/reject/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
       });
@@ -113,7 +113,7 @@ export default function ManagePromptsPage() {
   const handleTogglePremium = async (id, currentStatus) => {
     setUpdatingId(id);
     try {
-      const res = await fetch(`http://localhost:5500/api/admin/prompt/premium/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URI}/api/admin/prompt/premium/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isPremium: !currentStatus }),
@@ -147,7 +147,7 @@ export default function ManagePromptsPage() {
     setIsDeleting(true);
 
     try {
-      const res = await fetch(`http://localhost:5500/api/admin/prompt/${promptToDelete._id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URI}/api/admin/prompt/${promptToDelete._id}`, {
         method: "DELETE",
       });
       const data = await res.json();

@@ -22,7 +22,7 @@ export default function CopyButton({ prompt, currentUser, onCopySuccess, openPre
       toast.success("Prompt copied to clipboard!");
 
       // Update Copy Count API
-      fetch(`http://localhost:5500/api/prompt/copy/${prompt._id || prompt.id}`, {
+      fetch(`${process.env.NEXT_PUBLIC_URI}/api/prompt/copy/${prompt._id || prompt.id}`, {
         method: "PATCH",
       }).catch(() => {});
 

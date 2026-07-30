@@ -64,7 +64,7 @@ export default function UserOverviewDashboard() {
     try {
       setLoading(true);
       const res = await fetch(
-        `http://localhost:5500/api/user/dashboard-overview?email=${encodeURIComponent(
+        `${process.env.NEXT_PUBLIC_URI}/api/user/dashboard-overview?email=${encodeURIComponent(
           session.user.email
         )}`
       );

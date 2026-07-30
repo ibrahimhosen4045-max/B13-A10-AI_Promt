@@ -22,7 +22,7 @@ export default function AdminOverviewPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("http://localhost:5500/api/admin/dashboard-overview", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URI}/api/admin/dashboard-overview`, {
         cache: "no-store",
       });
 

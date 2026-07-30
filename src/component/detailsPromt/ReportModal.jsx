@@ -23,7 +23,7 @@ export default function ReportModal({ isOpen,
     e.preventDefault();
     try {
       setSubmitting(true);
-      const res = await fetch(`http://localhost:5500/api/report`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URI}/api/report`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ promptId,

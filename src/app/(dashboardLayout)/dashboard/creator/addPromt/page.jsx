@@ -111,7 +111,7 @@ const handleSubmit = async (e) => {
       creatorImage: user?.image,
     };
 
-    const res = await fetch("http://localhost:5500/api/creator", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_URI}/api/creator`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

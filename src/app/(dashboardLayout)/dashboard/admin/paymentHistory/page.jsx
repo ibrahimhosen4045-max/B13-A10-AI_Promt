@@ -22,7 +22,7 @@ export default function PaymentHistoryPage() {
   // Fetch Payment Stats
   const fetchStats = useCallback(async () => {
     try {
-      const res = await fetch(`http://localhost:5500/api/admin/payment-stats`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URI}/api/admin/payment-stats`);
       const result = await res.json();
       if (res.ok && result.success) {
         setStats(result.data);
@@ -36,7 +36,7 @@ export default function PaymentHistoryPage() {
   const fetchPayments = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:5500/api/admin/payments`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URI}/api/admin/payments`);
       const result = await res.json();
 
       if (res.ok && result.success) {

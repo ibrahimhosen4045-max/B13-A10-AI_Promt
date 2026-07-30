@@ -21,7 +21,7 @@ import {
   Sparkles,
 } from "lucide-react";
 
-const API_BASE_URL = "http://localhost:5500/api/admin";
+const API_BASE_URL = `${process.env.NEXT_PUBLIC_URI}/api/admin`;
 
 // Helper for Badge Colors based on Report Reason
 const getReasonBadgeStyle = (reason) => {

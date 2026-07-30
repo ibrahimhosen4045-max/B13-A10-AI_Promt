@@ -20,7 +20,7 @@ export default function BookmarkButton({ promptId, isBookmarkedInitial, onBookma
       if (!bookmarked) {
         // Save Bookmark
         
-        const res = await fetch(`http://localhost:5500/api/bookmark`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_URI}/api/bookmark`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ promptId, userEmail }),
@@ -31,7 +31,7 @@ export default function BookmarkButton({ promptId, isBookmarkedInitial, onBookma
         onBookmarkToggle(1);
       } else {
         // Remove Bookmark
-        const res = await fetch(`http://localhost:5500/api/bookmark/${promptId}?email=${userEmail}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_URI}/api/bookmark/${promptId}?email=${userEmail}`, {
           method: "DELETE",
         });
         if (!res.ok) throw new Error();

@@ -106,7 +106,7 @@ const handleSubmit = async (e) => {
       userImage: user?.image,
     };
 
-    const res = await fetch("http://localhost:5500/api/user/addPrompt", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_URI}/api/user/addPrompt`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

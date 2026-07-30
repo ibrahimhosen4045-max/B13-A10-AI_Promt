@@ -18,7 +18,7 @@ const handleRate = async (val) => {
   try {
     setRating(val);
 
-    const res = await fetch("http://localhost:5500/api/rating", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_URI}/api/rating`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -32,7 +32,7 @@ export default function AllPromptsPage() {
   const fetchPrompts = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:5500/api/allPromt`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URI}/api/allPromt`);
       if (!res.ok) throw new Error("Failed to fetch prompts");
       const data = await res.json();
       

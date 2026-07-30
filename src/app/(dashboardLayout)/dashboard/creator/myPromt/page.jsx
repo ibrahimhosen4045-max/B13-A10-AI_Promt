@@ -39,7 +39,7 @@ const [loading, setLoading] = useState(true);
 
     const getMyPromts = async ()=> {
       try{
-        const res = await fetch(`http://localhost:5500/api/creator/mypromt?email=${user.email}`)
+        const res = await fetch(`${process.env.NEXT_PUBLIC_URI}/api/creator/mypromt?email=${user.email}`)
 
         const data = await res.json();
         setPrompts(data)
@@ -61,7 +61,7 @@ const [loading, setLoading] = useState(true);
   // ১. ডিলিট ফাংশন (কোনো ব্রাউজার confirm অ্যালার্ট ছাড়া)
   const handleDeletePrompt =async (id, title) => {
     try{
-      const res = await fetch(`http://localhost:5500/api/creator/${id}?email=${user.email}`,{
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URI}/api/creator/${id}?email=${user.email}`,{
         method: "DELETE"
       });
       const data = await res.json();
@@ -106,7 +106,7 @@ const [loading, setLoading] = useState(true);
     try{
 
       const res = await fetch(
-        `http://localhost:5500/api/creator/${selectedPrompt._id}`, {
+        `${process.env.NEXT_PUBLIC_URI}/api/creator/${selectedPrompt._id}`, {
           method: "PATCH",
           headers: {
             "Content-Type" : "application/json"

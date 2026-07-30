@@ -42,7 +42,7 @@ export default function PromptDetailsPage({ params }) {
   const fetchPromptDetails = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:5500/api/prompt/${id}`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URI}/api/prompt/${id}`);
       if (!res.ok) {
         if (res.status === 404) setNotFound(true);
         throw new Error("Failed to load prompt");
@@ -53,7 +53,7 @@ export default function PromptDetailsPage({ params }) {
       }
 
       // Increment View Count
-      fetch(`http://localhost:5500/api/prompt/view/${id}`, { method: "PATCH" }).catch(() => {});
+      fetch(`${process.env.NEXT_PUBLIC_URI}/api/prompt/view/${id}`, { method: "PATCH" }).catch(() => {});
     } catch (err) {
       toast.error(err.message || "Error loading prompt details");
     } finally {
@@ -64,7 +64,7 @@ export default function PromptDetailsPage({ params }) {
   const fetchBookmarkStatus = async () => {
   try {
     const res = await fetch(
-      `http://localhost:5500/api/bookmark/check?promptId=${id}&email=${user?.email}`
+      `${process.env.NEXT_PUBLIC_URI}/api/bookmark/check?promptId=${id}&email=${user?.email}`
     );
 
     const data = await res.json();
@@ -88,7 +88,7 @@ useEffect(() => {
 
 const fetchUserRating = async () => {
   const res = await fetch(
-    `http://localhost:5500/api/rating/check?promptId=${id}&email=${user.email}`
+    `${process.env.NEXT_PUBLIC_URI}/api/rating/check?promptId=${id}&email=${user.email}`
   );
 
   const data = await res.json();
@@ -103,7 +103,7 @@ const fetchUserRating = async () => {
 const fetchReviews = async () => {
   try {
     const res = await fetch(
-      `http://localhost:5500/api/review/${id}`
+      `${process.env.NEXT_PUBLIC_URI}/api/review/${id}`
     );
 
     const data = await res.json();

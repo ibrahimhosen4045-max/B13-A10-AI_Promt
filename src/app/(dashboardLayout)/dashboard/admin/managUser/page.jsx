@@ -18,7 +18,6 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500";
 
 export default function ManageUsersPage() {
   const [users, setUsers] = useState([]);
@@ -37,7 +36,7 @@ export default function ManageUsersPage() {
 
       setLoading(true);
 
-      const res = await fetch("http://localhost:5500/api/allUser/register");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URI}/api/allUser/register`);
 
       if (!res.ok) throw new Error("Failed to load users data");
 
@@ -59,7 +58,7 @@ export default function ManageUsersPage() {
   const handleRoleChange = async (userId, newRole) => {
     setUpdatingRoleId(userId);
     try {
-      const res = await fetch(`http://localhost:5500/api/admin/user/role/${userId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URI}/api/admin/user/role/${userId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role: newRole }),
@@ -88,7 +87,7 @@ export default function ManageUsersPage() {
     setBlockingUserId(userId);
 
     try {
-      const res = await fetch(`http://localhost:5500/api/admin/user-block/${userId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URI}/api/admin/user-block/${userId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isBlocked: nextBlockedState }),
@@ -117,7 +116,7 @@ export default function ManageUsersPage() {
     setIsDeleting(true);
 
     try {
-      const res = await fetch(`http://localhost:5500/api/admin/user-delet/${userToDelete._id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URI}/api/admin/user-delet/${userToDelete._id}`, {
         method: "DELETE",
       });
 

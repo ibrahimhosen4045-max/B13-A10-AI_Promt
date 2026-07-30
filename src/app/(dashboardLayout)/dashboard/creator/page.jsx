@@ -52,7 +52,7 @@ export default function CreatorDashboardPage() {
       setLoading(true);
       setError(null);
       const res = await fetch(
-        `http://localhost:5500/api/creator/dashboard?email=${encodeURIComponent(email)}`
+        `${process.env.NEXT_PUBLIC_URI}/api/creator/dashboard?email=${encodeURIComponent(email)}`
       );
 
       if (!res.ok) {

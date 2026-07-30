@@ -29,7 +29,7 @@ export default function PaymentModal({ isOpen, onClose, userEmail, onSuccess }) 
     setLoading(true);
     try {
       const res = await fetch(
-      "http://localhost:5500/api/user-premium",
+      `${process.env.NEXT_PUBLIC_URI}/api/user-premium`,
       {
         method: "PATCH",
         headers: {
