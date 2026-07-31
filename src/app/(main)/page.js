@@ -9,8 +9,8 @@ export default function Home() {
   return (
     <div className="">
       <Banner/>
-      <TopSellers></TopSellers>
       <FeaturedPrompts></FeaturedPrompts>
+      <TopSellers></TopSellers>     
       <AboutMarketplace></AboutMarketplace>
       <Testimonials></Testimonials>
     </div>

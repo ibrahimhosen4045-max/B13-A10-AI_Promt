@@ -174,7 +174,7 @@ export default function AllPromptsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-4 sm:p-6 lg:p-10 font-sans selection:bg-cyan-500 selection:text-slate-950">
+    <div className="min-h-screen pt-25 md:pt-25 lg:pt-25 bg-slate-950 text-slate-100 p-4 sm:p-6 lg:p-10 font-sans selection:bg-cyan-500 selection:text-slate-950">
       <div className="max-w-7xl mx-auto space-y-8">
         
         {/* Page Header */}

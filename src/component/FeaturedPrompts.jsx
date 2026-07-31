@@ -1,7 +1,7 @@
 "use client"
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Copy, ShieldAlert, Sparkles } from 'lucide-react';
+import { Heart, Copy, ShieldAlert, Sparkles, Star, Bookmark, Layers, Zap } from 'lucide-react';
 
 export default function FeaturedPrompts({ isLoggedIn = false, onRedirectToLogin }) {
   const [activeTab, setActiveTab] = useState('ALL');
@@ -184,19 +184,33 @@ export default function FeaturedPrompts({ isLoggedIn = false, onRedirectToLogin 
                     {prompt.title}
                   </h3>
 
-                  <div className="flex items-center justify-between text-xs text-gray-400">
-                    <span className="font-semibold text-gray-500">Price :</span>
-                    <span className="font-extrabold text-cyan-400 tracking-wide">{prompt.price}</span>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-purple-500/10 text-purple-300 border border-purple-500/20">
+                      <Layers className="w-3 h-3" /> {prompt.category || "General"}
+                    </span>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-800 text-slate-300 border border-slate-700/60 capitalize">
+                      {prompt.difficulty || "Intermediate"}
+                    </span>
                   </div>
 
                   <div className="flex items-center justify-between text-[11px] font-bold text-gray-500 mt-1 border-t border-white/[0.04] pt-3">
                     <span className="uppercase text-[10px] bg-white/5 border border-white/5 px-2.5 py-1 rounded-full text-purple-300">
                       {prompt.aiTool}
                     </span>
-                    <span className="flex items-center gap-1 hover:text-red-400 transition-colors cursor-pointer">
-                      <Heart className="w-3.5 h-3.5 text-pink-500 fill-pink-500/10" />
-                      {prompt.likes}
-                    </span>
+                    <div className="flex items-center gap-3">
+                      <span className="flex items-center gap-1 font-semibold text-amber-400">
+                        <Star className="w-3.5 h-3.5 fill-amber-400" />
+                        {prompt.averageRating ? prompt.averageRating.toFixed(1) : "0.0"}
+                      </span>
+                      <span className="flex items-center gap-1 text-slate-400">
+                        <Copy className="w-3.5 h-3.5 text-slate-500" />
+                        {prompt.copyCount ?? 0}
+                      </span>
+                      <span className="flex items-center gap-1 text-slate-400">
+                        <Bookmark className="w-3.5 h-3.5 text-slate-500" />
+                        {prompt.bookmarkCount ?? 0}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
