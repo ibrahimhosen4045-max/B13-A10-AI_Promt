@@ -89,15 +89,15 @@ export default function PaymentHistoryPage() {
   }, [searchQuery, statusFilter]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-slate-950 text-slate-100 px-3 py-4 sm:px-6 lg:px-8">
       <Toaster position="top-right" />
 
-      <div className="max-w-7xl mx-auto space-y-8">
+      <div className="mx-auto max-w-7xl space-y-6 lg:space-y-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/40 border border-slate-800 p-6 rounded-3xl backdrop-blur-2xl shadow-xl"
+          className="flex flex-col gap-4 rounded-3xl border border-slate-800 bg-slate-900/40 p-4 sm:p-6 lg:flex-row lg:items-center lg:justify-between"
         >
           <div className="space-y-1">
             <div className="flex items-center gap-3">

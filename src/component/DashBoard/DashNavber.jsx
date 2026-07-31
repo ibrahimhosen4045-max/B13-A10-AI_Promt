@@ -42,7 +42,7 @@ const DashNavber = ({userDetails}) => {
         { id: 'manage-prompts', label: 'Manage Prompts', icon: SquareChartGantt , href: '/dashboard/admin/managPromt' },
         { id: 'payment-history', label: 'Payment History', icon: CreditCard  , href: '/dashboard/admin/paymentHistory' },
         { id: 'reports', label: 'Reported Prompts', icon: AlertTriangle, href: '/dashboard/admin/reportedPromt' },
-        { id: 'my-Profile', label: 'My Profile', icon: UserCog , href: '/dashboard/profile' },
+        { id: 'my-Profile', label: 'My Profile', icon: UserCog , href: '/dashboard/admin/adminProfile' },
       ]
     }
     
@@ -51,7 +51,7 @@ const DashNavber = ({userDetails}) => {
         ...baseLinks,
         { id: 'add-prompt', label: 'Add New Prompt', icon: PlusCircle, href: '/dashboard/creator/addPromt'},
         { id: 'my-prompts', label: 'My Prompts', icon: ListOrdered, href: '/dashboard/creator/myPromt' },
-        { id: 'my-Profile', label: 'My Profile', icon: UserCog , href: '/dashboard/profile' },
+        { id: 'my-Profile', label: 'My Profile', icon: UserCog , href: '/dashboard/creator/creatorProfile' },
 
       ]
     }

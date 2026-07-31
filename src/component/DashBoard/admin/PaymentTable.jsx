@@ -1,30 +1,10 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  CheckCircle2,
-  XCircle,
-  Clock,
-  Search,
-  ChevronLeft,
-  ChevronRight,
-  FolderOpen,
-  ArrowUpDown,
-  CreditCard,
-} from "lucide-react";
+import {  CheckCircle2,  XCircle,  Clock,  Search,  ChevronLeft,  ChevronRight,  FolderOpen,  ArrowUpDown,  CreditCard,} from "lucide-react";
 
-export default function PaymentTable({
-  payments,
-  loading,
-  searchQuery,
-  setSearchQuery,
-  statusFilter,
-  setStatusFilter,
-  currentPage,
-  setCurrentPage,
-  itemsPerPage,
-  totalItems,
-}) {
+export default function PaymentTable({ payments, loading, searchQuery, setSearchQuery, statusFilter, setStatusFilter, currentPage, setCurrentPage, itemsPerPage, totalItems,}) {
+
   const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
 
   const formatDate = (dateString) => {

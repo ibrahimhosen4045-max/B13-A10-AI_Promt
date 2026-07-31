@@ -2,27 +2,10 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
-import {
-  User as UserIcon,
-  Mail,
-  Shield,
-  Calendar,
-  Edit3,
-  Sparkles,
-  CheckCircle2,
-  AlertTriangle,
-  LogOut,
-  Bookmark,
-  FileCheck,
-  Clock,
-  FileText,
-  Loader2,
-  Copy,
-  Star,
-  Flag,
-  Users,
-  UserCheck,
+import { User as UserIcon, Mail, Shield, Calendar, Edit3, Sparkles, CheckCircle2, AlertTriangle, LogOut, Bookmark, FileCheck, Clock, FileText, Loader2, Copy, Star, Flag, Users, UserCheck,
 } from "lucide-react";
+
+
 import toast from "react-hot-toast";
 import { authClient } from "@/lib/auth-client";
 import PaymentModal from "@/component/DashBoard/PaymentModal";
@@ -43,50 +26,47 @@ export default function ProfilePage() {
   const user = userData || session?.user;
   const role = user?.role || "User";
 
-  // Single dynamic fetch function depending on user role
-  const fetchDashboardData = useCallback(async (userEmail, userRole) => {
-    if (!userEmail) return;
+const fetchDashboardData = useCallback(async (userEmail, userRole) => {
+  if (!userEmail) return;
 
-    try {
-      setLoading(true);
-      let url = "";
+  try {
+    setLoading(true);
 
-      if (userRole === "Creator") {
-        url = `${process.env.NEXT_PUBLIC_URI}/api/creator/dashboard?email=${encodeURIComponent(userEmail)}`;
-      } else if (userRole === "Admin") {
-        url = `${process.env.NEXT_PUBLIC_URI}/api/admin/dashboard-overview`;
-      } else {
-        url = `${process.env.NEXT_PUBLIC_URI}/api/user/profile-stats?email=${encodeURIComponent(userEmail)}`;
-      }
-
-      const res = await fetch(url);
-      if (!res.ok) {
-        throw new Error(`Failed to fetch dashboard data (Status: ${res.status})`);
-      }
-
-      const data = await res.json();
-
-      if (data.success || data.stats || data) {
-        if (data.user) {
-          setUserData(data.user);
-        }
-        setStats(data.stats || data);
-      }
-    } catch (err) {
-      toast.error(err.message || "Failed to load dashboard metrics.");
-    } finally {
+    if (userRole !== "Admin") {
       setLoading(false);
+      return;
     }
-  }, []);
 
-  useEffect(() => {
-    if (session?.user?.email) {
-      const activeRole = userData?.role || session.user.role || "User";
-      fetchDashboardData(session.user.email, activeRole);
-    } else if (!isSessionPending && !session) {
-      setLoading(false);
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_URI}/api/admin/dashboard-overview`
+    );
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status}`);
     }
-  }, [session, isSessionPending, fetchDashboardData]);
+
+    const data = await res.json();
+
+    if (data.user) {
+      setUserData(data.user);
+    }
+
+    setStats(data.stats || data);
+  } catch (err) {
+    toast.error(err.message);
+  } finally {
+    setLoading(false);
+  }
+}, []);
+
+useEffect(() => {
+  if (!session?.user?.email) {
+    if (!isSessionPending) setLoading(false);
+    return;
+  }
+
+  fetchDashboardData(session.user.email, session.user.role);
+}, [session, isSessionPending, fetchDashboardData]);
 
   const handleSignOut = useCallback(async () => {
     try {
@@ -99,110 +79,39 @@ export default function ProfilePage() {
   }, []);
 
   // Compute cards dynamic array based on Role
-  const cards = useMemo(() => {
-    if (role === "Creator") {
-      return [
-        {
-          label: "Total Prompts",
-          val: stats.totalSubmitted ?? stats.totalPrompts ?? 0,
-          icon: FileText,
-          color: "text-blue-400",
-          border: "hover:border-blue-500/40",
-        },
-        {
-          label: "Approved Prompts",
-          val: stats.approved ?? 0,
-          icon: FileCheck,
-          color: "text-emerald-400",
-          border: "hover:border-emerald-500/40",
-        },
-        {
-          label: "Pending Prompts",
-          val: stats.pending ?? 0,
-          icon: Clock,
-          color: "text-amber-400",
-          border: "hover:border-amber-500/40",
-        },
-        {
-          label: "Total Copies",
-          val: stats.totalCopies ?? stats.copies ?? 0,
-          icon: Copy,
-          color: "text-cyan-400",
-          border: "hover:border-cyan-500/40",
-        },
-      ];
-    }
+const cards = useMemo(() => {
+  return [
+    {
+      label: "Total Users",
+      val: stats.data?.totalUsers ?? 0,
+      icon: Users,
+      color: "text-cyan-400",
+      border: "hover:border-cyan-500/40",
+    },
+    {
+      label: "Total Creators",
+      val: stats.data?.totalCreators ?? 0,
+      icon: UserCheck,
+      color: "text-purple-400",
+      border: "hover:border-purple-500/40",
+    },
+    {
+      label: "Total Prompts",
+      val: stats.data?.totalPrompts ?? 0,
+      icon: FileText,
+      color: "text-indigo-400",
+      border: "hover:border-indigo-500/40",
+    },
+    {
+      label: "Total Reports",
+      val: stats.data?.totalReports ?? 0,
+      icon: Flag,
+      color: "text-rose-400",
+      border: "hover:border-rose-500/40",
+    },
+  ];
+}, [stats]);
 
-    if (role === "Admin") {
-      return [
-        {
-          label: "Total Users",
-          val: stats.totalUsers ?? 0,
-          icon: Users,
-          color: "text-cyan-400",
-          border: "hover:border-cyan-500/40",
-        },
-        {
-          label: "Total Creators",
-          val: stats.totalCreators ?? 0,
-          icon: UserCheck,
-          color: "text-purple-400",
-          border: "hover:border-purple-500/40",
-        },
-        {
-          label: "Total Prompts",
-          val: stats.totalPrompts ?? 0,
-          icon: FileText,
-          color: "text-indigo-400",
-          border: "hover:border-indigo-500/40",
-        },
-        {
-          label: "Total Reports",
-          val: stats.totalReports ?? stats.reports ?? 0,
-          icon: Flag,
-          color: "text-rose-400",
-          border: "hover:border-rose-500/40",
-        },
-      ];
-    }
-
-    // Default Role = User
-    return [
-      {
-        label: "Saved Prompts",
-        val: stats.saved ?? 0,
-        icon: Bookmark,
-        color: "text-purple-400",
-        border: "hover:border-purple-500/40",
-      },
-      {
-        label: "Copied Prompts",
-        val: stats.copies ?? 0,
-        icon: Copy,
-        color: "text-cyan-400",
-        border: "hover:border-cyan-500/40",
-      },
-      {
-        label: "Reviews",
-        val: stats.reviews ?? 0,
-        icon: Star,
-        color: "text-amber-400",
-        border: "hover:border-amber-500/40",
-      },
-      {
-        label: "Reports",
-        val: stats.reports ?? 0,
-        icon: Flag,
-        color: "text-rose-400",
-        border: "hover:border-rose-500/40",
-      },
-    ];
-  }, [role, stats]);
-
-  console.log({
-  role: session?.user?.role,
-  session: session?.user,
-})
 
   if (isSessionPending || loading) {
     return (

@@ -20,6 +20,7 @@ import { authClient } from '@/lib/auth-client';
 import SignOutModal from './DashBoard/SingOutModal';
 import toast from 'react-hot-toast';
 
+
 export default function Navber() {
   const pathname = usePathname();
   const router = useRouter()
@@ -79,6 +80,17 @@ export default function Navber() {
     router.push('/')
     toast.success("SignOut successfully!")
   }
+
+  const getProfilePath = (role) => {
+  switch (role) {
+    case 'Admin':
+      return '/dashboard/admin/adminProfile';
+    case 'Creator':
+      return '/dashboard/creator/creatorProfile';
+    default:
+      return '/dashboard/users/userProfile';
+  }
+};
 
   return (
     <div className="relative">
@@ -176,15 +188,21 @@ export default function Navber() {
                         </div>
 
                         <div className="py-2">
-                          <a href="#profile" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-all">
+                          <Link 
+                            href={getProfilePath(userMockData?.role)} 
+                            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-all"
+                          >
                             <User className="w-4 h-4 text-purple-400" /> My Profile
-                          </a>
+                          </Link>
+                          
                           <Link href={"/dashboard"} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-all">
                             <LayoutDashboard className="w-4 h-4 text-indigo-400" /> {userMockData.role} Dashboard
                           </Link>
-                          <a href="#saved" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-all">
+                          {
+                            userMockData.role === "User" && <Link href={'/dashboard/users/bookmark'} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-all">
                             <Bookmark className="w-4 h-4 text-cyan-400" /> Bookmarked Prompts
-                          </a>
+                          </Link>
+                          }
                         </div>
 
                         <div className="pt-2 border-t border-white/5">

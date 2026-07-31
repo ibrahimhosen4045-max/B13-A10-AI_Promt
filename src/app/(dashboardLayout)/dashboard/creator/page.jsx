@@ -12,6 +12,9 @@ import {
   AlertCircle,
   Loader2,
   RefreshCw,
+  FileCheck,
+  Clock,
+  GitPullRequestClosed,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -92,7 +95,7 @@ export default function CreatorDashboardPage() {
 
   if (!session && !isSessionPending) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6 ">
         <div className="max-w-md w-full bg-slate-900/60 border border-slate-800 rounded-3xl p-8 text-center backdrop-blur-xl shadow-2xl">
           <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mx-auto mb-4">
             <AlertCircle className="w-6 h-6" />
@@ -144,19 +147,35 @@ export default function CreatorDashboardPage() {
       borderColor: "hover:border-indigo-500/30",
     },
     {
-      title: "Total Bookmarks",
-      value: analytics?.totalBookmarks ?? 0,
-      icon: Bookmark,
-      gradient: "from-violet-500 to-fuchsia-500",
-      bgGlow: "group-hover:shadow-fuchsia-500/10",
-      borderColor: "hover:border-fuchsia-500/30",
+      title: "Total Approved",
+      value: analytics?.approved ?? 0,
+      icon: FileCheck,
+      gradient: "from-emerald-500 to-green-500",
+      bgGlow: "group-hover:shadow-emerald-500/20",
+      borderColor: "hover:border-emerald-500/30",
+    },
+    {
+      title: "Total Pending",
+      value: analytics?.pending ?? 0,
+      icon: Clock,
+      gradient: "from-amber-500 to-orange-500",
+      bgGlow: "group-hover:shadow-amber-500/20",
+      borderColor: "hover:border-amber-500/30",
+    },
+    {
+      title: "Total Rejected",
+      value: analytics?.rejected ?? 0,
+      icon: GitPullRequestClosed,
+      gradient: "from-rose-500 to-red-600",
+      bgGlow: "group-hover:shadow-rose-500/20",
+      borderColor: "hover:border-rose-500/30",
     },
   ];
 
   const growthData = analytics?.growth || [];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-4 sm:p-6 lg:p-8 selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen bg-slate-950 text-slate-100 pt-20 md:pt-20  p-4 sm:p-6 lg:p-8 selection:bg-indigo-500 selection:text-white">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Welcome Header */}
         <motion.div
@@ -192,7 +211,7 @@ export default function CreatorDashboardPage() {
         </motion.div>
 
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5">
           {statCards.map((card, index) => {
             const Icon = card.icon;
             return (
