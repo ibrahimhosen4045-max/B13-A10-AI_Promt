@@ -8,17 +8,23 @@ import banner1 from '@/assest/66.png'
 import banner3 from '@/assest/44.png'
 import banner4 from '@/assest/33.jpeg'
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 export default function Banner() {
   const [searchQuery, setSearchQuery] = useState('');
+  const router = useRouter();
 
   // ট্রেন্ডিং র্যান্ডম প্রম্পট ট্যাগস
   const trendingTags = ['Midjourney', 'ChatGPT-4', 'Claude 3.5', 'DALL-E 3', 'Stable Diffusion', 'Neo-Retro Art'];
 
   const handleSearch = (e) => {
     e.preventDefault();
-    console.log('Searching for:', searchQuery);
-    // আপনার সার্চ ফাংশন এখানে যোগ করুন
+
+    if (!searchQuery.trim()) return;
+
+    router.push(
+      `/search?q=${encodeURIComponent(searchQuery.trim())}`
+    );
   };
 
   return (
@@ -114,7 +120,9 @@ export default function Banner() {
           {trendingTags.map((tag, idx) => (
             <button 
               key={idx} 
-              onClick={() => setSearchQuery(tag)}
+              onClick={() =>
+                router.push(`/search?q=${encodeURIComponent(tag)}`)
+              }
               className="text-xs text-gray-400 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/20 px-3 py-1.5 rounded-lg transition-all duration-200"
             >
               #{tag}
