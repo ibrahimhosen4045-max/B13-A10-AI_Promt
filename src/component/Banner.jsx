@@ -9,10 +9,14 @@ import banner3 from '@/assest/44.png'
 import banner4 from '@/assest/33.jpeg'
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { authClient } from '@/lib/auth-client';
 
 export default function Banner() {
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
+  const {data: session} = authClient.useSession()
+  const user = session?.user
 
   // ট্রেন্ডিং র্যান্ডম প্রম্পট ট্যাগস
   const trendingTags = ['Midjourney', 'ChatGPT-4', 'Claude 3.5', 'DALL-E 3', 'Stable Diffusion', 'Neo-Retro Art'];
@@ -137,12 +141,18 @@ export default function Banner() {
           transition={{ duration: 0.8, delay: 0.5 }}
           className="flex flex-col sm:flex-row items-center gap-4"
         >
+          <Link href={'/allPrompt'}>
           <button className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white font-semibold text-sm hover:opacity-90 shadow-[0_0_30px_rgba(168,85,247,0.4)] transition-all duration-300 hover:scale-105">
             EXPLORE MORE
           </button>
+          </Link>
+          {
+            user?.role === "User" && <Link href={'/dashboard/users/bookmark'}>
           <button className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-transparent text-indigo-300 font-semibold text-sm border border-indigo-500/40 hover:border-indigo-400 hover:bg-indigo-500/10 transition-all duration-300 hover:scale-105">
             COLLECT PROMPTS
           </button>
+          </Link>
+          }
         </motion.div>
       </div>
       </div>

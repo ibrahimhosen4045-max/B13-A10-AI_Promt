@@ -152,19 +152,12 @@ const DashNavber = ({userDetails}) => {
                 const Icon = link.icon
                 const isActive = activeTab === link.id
                 return (
-                  <button
-                    key={link.id}
-                    onClick={() => {
-                      setActiveTab(link.id)
-                      setIsMobileSidebarOpen(false)
-                    }}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium ${
-                      isActive ? 'bg-purple-600/20 text-purple-300 border border-purple-500/30' : 'text-gray-400'
-                    }`}
-                  >
-                    <Icon className="w-5 h-5" />
-                    {link.label}
-                  </button>
+                  <NavLink href={link.href} key={link.id} >
+              <button className='flex gap-2 items-centers'>
+                <Icon className="w-5 h-5" />
+                {link.label}
+              </button>
+              </NavLink>
                 )
               })}
             </nav>

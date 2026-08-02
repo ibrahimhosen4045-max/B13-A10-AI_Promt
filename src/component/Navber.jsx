@@ -287,12 +287,12 @@ export default function Navber() {
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-sm">
-                    <a href="#dashboard" onClick={() => setIsOpen(false)} className="flex items-center justify-center gap-2 p-3 rounded-xl bg-white/5 text-gray-300 hover:text-white">
+                    <Link href={'/dashboard'} onClick={() => setIsOpen(false)} className="flex items-center justify-center gap-2 p-3 rounded-xl bg-white/5 text-gray-300 hover:text-white">
                       <LayoutDashboard className="w-4 h-4 text-purple-400" /> Dashboard
-                    </a>
-                    <a href="#profile" onClick={() => setIsOpen(false)} className="flex items-center justify-center gap-2 p-3 rounded-xl bg-white/5 text-gray-300 hover:text-white">
+                    </Link>
+                    <Link href={getProfilePath(userMockData?.role)}  onClick={() => setIsOpen(false)} className="flex items-center justify-center gap-2 p-3 rounded-xl bg-white/5 text-gray-300 hover:text-white">
                       <User className="w-4 h-4 text-cyan-400" /> Profile
-                    </a>
+                    </Link>
                   </div>
                 </motion.div>
               )}

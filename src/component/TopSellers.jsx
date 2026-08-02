@@ -50,7 +50,7 @@ export default function TopSellers() {
             Creative Creators
           </span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-none">
-            Top Sellers This Month
+            Top Creator This Month
           </h2>
           <div className="h-1 w-20 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full mt-4" />
         </div>
