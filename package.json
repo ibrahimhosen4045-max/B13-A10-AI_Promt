@@ -23,7 +23,8 @@
     "react-hot-toast": "^2.6.0",
     "react-loader-spinner": "^8.0.2",
     "recharts": "^3.10.0",
-    "sweetalert2": "^11.26.25"
+    "sweetalert2": "^11.26.25",
+    "swiper": "^14.0.7"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
